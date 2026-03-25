@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environment
+env/
+Lib/
+Scripts/
+
+# Database (optional)
+db.sqlite3
+
+# Media files (optional)
+media/
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store

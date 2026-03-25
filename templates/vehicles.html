@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="mb-4">🚗 Véhicules Disponibles</h2>
+
+<div class="row">
+    {% for vehicle in vehicles %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            {% if vehicle.image %}
+                <img src="{{ vehicle.image.url }}" class="card-img-top" alt="{{ vehicle.brand }}">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ vehicle.brand }} {{ vehicle.model }}</h5>
+                <p class="card-text">
+                    💰 <strong>{{ vehicle.price_per_day }} DT/jour</strong><br>
+                    {% if vehicle.available %}
+                        <span class="badge bg-success">Disponible</span>
+                    {% else %}
+                        <span class="badge bg-danger">Non Disponible</span>
+                    {% endif %}
+                </p>
+                {% if vehicle.available and user.is_authenticated %}
+                    <a href="/rentals/book/{{ vehicle.id }}/" class="btn btn-primary">Réserver</a>
+                {% elif not user.is_authenticated %}
+                    <a href="/login/" class="btn btn-secondary">Connectez-vous pour réserver</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+        <p>Aucun véhicule disponible pour le moment.</p>
+    {% endfor %}
+</div>
+{% endblock %}

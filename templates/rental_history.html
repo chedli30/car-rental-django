@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="mb-4">📋 Historique de mes Locations</h2>
+
+{% if rentals %}
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Véhicule</th>
+                <th>Date début</th>
+                <th>Date fin</th>
+                <th>Statut</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for rental in rentals %}
+            <tr>
+                <td>{{ rental.vehicle.brand }} {{ rental.vehicle.model }}</td>
+                <td>{{ rental.start_date }}</td>
+                <td>{{ rental.end_date }}</td>
+                <td>
+                    {% if rental.is_active %}
+                        <span class="badge bg-success">Active</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Terminée</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+    <div class="alert alert-info">Vous n'avez aucune location pour le moment.</div>
+{% endif %}
+
+<a href="/vehicles/" class="btn btn-primary">Voir les Véhicules</a>
+{% endblock %}
