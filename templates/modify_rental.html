@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2 class="mb-4">📝 Modifier la Réservation</h2>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5>{{ rental.vehicle.brand }} {{ rental.vehicle.model }}</h5>
+                <p>💰 <strong>{{ rental.vehicle.price_per_day }} DT/jour</strong></p>
+                <p><small class="text-muted">Réservation actuelle: {{ rental.start_date }} - {{ rental.end_date }}</small></p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+                {% endif %}
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Nouvelle date de début</label>
+                        <input type="date" name="start_date" class="form-control" value="{{ rental.start_date }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nouvelle date de fin</label>
+                        <input type="date" name="end_date" class="form-control" value="{{ rental.end_date }}" required>
+                    </div>
+                    <div class="alert alert-info">
+                        <small>Le prix sera automatiquement recalculé en fonction des nouvelles dates.</small>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-fill">Modifier la réservation</button>
+                        <a href="/rentals/dashboard/" class="btn btn-secondary">Annuler</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

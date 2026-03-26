@@ -11,6 +11,7 @@
                 <th>Véhicule</th>
                 <th>Date début</th>
                 <th>Date fin</th>
+                <th>Prix total</th>
                 <th>Statut</th>
             </tr>
         </thead>
@@ -20,6 +21,7 @@
                 <td>{{ rental.vehicle.brand }} {{ rental.vehicle.model }}</td>
                 <td>{{ rental.start_date }}</td>
                 <td>{{ rental.end_date }}</td>
+                <td>{{ rental.total_price }} DT</td>
                 <td>
                     {% if rental.is_active %}
                         <span class="badge bg-success">Active</span>

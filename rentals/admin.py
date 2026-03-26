@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Rental, RegistrationRequest, Profile
+from .models import Rental, RegistrationRequest, Profile, Review
 
 @admin.register(Rental)
 class RentalAdmin(admin.ModelAdmin):
@@ -43,3 +43,9 @@ class RegistrationRequestAdmin(admin.ModelAdmin):
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ['user', 'photo']
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ['customer', 'vehicle', 'rating', 'created_at']
+    list_filter = ['rating', 'created_at']
+    readonly_fields = ['created_at']

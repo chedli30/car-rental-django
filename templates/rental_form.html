@@ -14,17 +14,55 @@
 
         <form method="POST">
             {% csrf_token %}
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
             <div class="mb-3">
                 <label class="form-label">Date de début</label>
-                <input type="date" name="start_date" class="form-control" required>
+                <input type="date" name="start_date" class="form-control" required value="{{ request.GET.start_date }}">
             </div>
             <div class="mb-3">
                 <label class="form-label">Date de fin</label>
-                <input type="date" name="end_date" class="form-control" required>
+                <input type="date" name="end_date" class="form-control" required value="{{ request.GET.end_date }}">
+            </div>
+            <div class="mb-3">
+                <div class="alert alert-info">
+                    <strong>Prix estimé: <span id="estimated-price">{{ vehicle.price_per_day }} DT</span></strong>
+                    <small class="text-muted">(Prix par jour × nombre de jours)</small>
+                </div>
             </div>
             <button type="submit" class="btn btn-primary w-100">Confirmer la Réservation</button>
             <a href="/vehicles/" class="btn btn-secondary w-100 mt-2">Annuler</a>
         </form>
     </div>
 </div>
-{% endblock %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const startDateInput = document.querySelector('input[name="start_date"]');
+    const endDateInput = document.querySelector('input[name="end_date"]');
+    const priceDisplay = document.getElementById('estimated-price');
+    const pricePerDay = {{ vehicle.price_per_day }};
+    
+    function calculatePrice() {
+        const startDate = new Date(startDateInput.value);
+        const endDate = new Date(endDateInput.value);
+        
+        if (startDate && endDate && endDate > startDate) {
+            const timeDiff = endDate.getTime() - startDate.getTime();
+            const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            const totalPrice = daysDiff * pricePerDay;
+            priceDisplay.textContent = totalPrice + ' DT';
+        } else {
+            priceDisplay.textContent = pricePerDay + ' DT';
+        }
+    }
+    
+    startDateInput.addEventListener('change', calculatePrice);
+    endDateInput.addEventListener('change', calculatePrice);
+    
+    // Calculate initial price if dates are pre-filled
+    calculatePrice();
+});
+</script>{% endblock %}

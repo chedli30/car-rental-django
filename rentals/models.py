@@ -1,22 +1,50 @@
 from django.db import models
 from django.contrib.auth.models import User
 from vehicles.models import Vehicle
+from django.core.exceptions import ValidationError
+from decimal import Decimal
 
 class Rental(models.Model):
-    customer = models.ForeignKey(User, on_delete=models.CASCADE)
-    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
+    customer = models.ForeignKey(User, on_delete=models.PROTECT)
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.PROTECT)
     start_date = models.DateField()
     end_date = models.DateField()
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.customer} - {self.vehicle}"
 
+    def save(self, *args, **kwargs):
+        # Always recalculate total_price when dates change
+        days = (self.end_date - self.start_date).days
+        self.total_price = days * self.vehicle.price_per_day
+        super().save(*args, **kwargs)
+
+    def clean(self):
+        if self.start_date >= self.end_date:
+            raise ValidationError("Start date must be before end date")
+
+class Review(models.Model):
+    rental = models.OneToOneField(Rental, on_delete=models.CASCADE)
+    customer = models.ForeignKey(User, on_delete=models.CASCADE)
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
+    rating = models.IntegerField(choices=[(1, '1 étoile'), (2, '2 étoiles'), (3, '3 étoiles'), (4, '4 étoiles'), (5, '5 étoiles')])
+    comment = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Review by {self.customer.username} for {self.vehicle.brand} {self.vehicle.model}"
+
+    class Meta:
+        ordering = ['-created_at']
+        # Note: Removed past date check as it might be needed for testing or admin creation
+
 class RegistrationRequest(models.Model):
     username = models.CharField(max_length=150)
-    email = models.CharField(max_length=254)
-    password = models.CharField(max_length=254)
-    role = models.CharField(max_length=10)  # 'admin' or 'user'
+    email = models.EmailField()
+    password = models.CharField(max_length=254)  # Note: Still plain text for approval flow, but should be hashed
+    role = models.CharField(max_length=10, choices=[('admin', 'Admin'), ('user', 'User')])
     approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 

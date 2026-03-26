@@ -3,33 +3,126 @@
 {% block content %}
 <h2 class="mb-4">🚗 Véhicules Disponibles</h2>
 
+<!-- Search and Filter Form -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="GET" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Rechercher</label>
+                <input type="text" name="search" class="form-control" placeholder="Marque, modèle..." value="{{ search_query }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Prix min</label>
+                <input type="number" name="min_price" class="form-control" placeholder="DT" value="{{ min_price }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Prix max</label>
+                <input type="number" name="max_price" class="form-control" placeholder="DT" value="{{ max_price }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Date début</label>
+                <input type="date" name="start_date" class="form-control" value="{{ start_date }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Date fin</label>
+                <input type="date" name="end_date" class="form-control" value="{{ end_date }}">
+            </div>
+            <div class="col-md-1 d-flex align-items-end">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="available_only" id="available_only" {% if available_only %}checked{% endif %}>
+                    <label class="form-check-label" for="available_only">
+                        Disponible
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Trier par</label>
+                <select name="sort" class="form-select">
+                    <option value="price_asc" {% if sort_by == 'price_asc' %}selected{% endif %}>Prix croissant</option>
+                    <option value="price_desc" {% if sort_by == 'price_desc' %}selected{% endif %}>Prix décroissant</option>
+                    <option value="brand" {% if sort_by == 'brand' %}selected{% endif %}>Marque</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary me-2">🔍 Rechercher</button>
+                <a href="/vehicles/" class="btn btn-secondary">🔄 Réinitialiser</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Results Count -->
+<div class="mb-3">
+    <p class="text-muted">{{ page_obj.paginator.count }} véhicule(s) trouvé(s)</p>
+</div>
+
 <div class="row">
-    {% for vehicle in vehicles %}
+    {% for vehicle in page_obj %}
     <div class="col-md-4 mb-4">
         <div class="card h-100">
             {% if vehicle.image %}
-                <img src="{{ vehicle.image.url }}" class="card-img-top" alt="{{ vehicle.brand }}">
+                <img src="{{ vehicle.image.url }}" class="card-img-top" alt="{{ vehicle.brand }}" style="height: 200px; object-fit: cover;">
             {% endif %}
-            <div class="card-body">
+            <div class="card-body d-flex flex-column">
                 <h5 class="card-title">{{ vehicle.brand }} {{ vehicle.model }}</h5>
                 <p class="card-text">
-                    💰 <strong>{{ vehicle.price_per_day }} DT/jour</strong><br>
-                    {% if vehicle.available %}
-                        <span class="badge bg-success">Disponible</span>
-                    {% else %}
-                        <span class="badge bg-danger">Non Disponible</span>
+                    💰 <strong>{{ vehicle.price_per_day }} DT/jour</strong>
+                    {% if vehicle.average_rating %}
+                    <br>
+                    ⭐ <strong>{{ vehicle.average_rating }}/5</strong> ({{ vehicle.review_count }} avis)
                     {% endif %}
                 </p>
-                {% if vehicle.available and user.is_authenticated %}
-                    <a href="/rentals/book/{{ vehicle.id }}/" class="btn btn-primary">Réserver</a>
-                {% elif not user.is_authenticated %}
-                    <a href="/login/" class="btn btn-secondary">Connectez-vous pour réserver</a>
-                {% endif %}
+                <div class="mt-auto">
+                    {% if user.is_authenticated %}
+                        <a href="/rentals/book/{{ vehicle.id }}/?start_date={{ start_date }}&end_date={{ end_date }}" class="btn btn-primary">Réserver</a>
+                        <a href="/vehicles/{{ vehicle.id }}/" class="btn btn-outline-info btn-sm">Détails</a>
+                    {% else %}
+                        <a href="/login/" class="btn btn-secondary">Connectez-vous pour réserver</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
     {% empty %}
-        <p>Aucun véhicule disponible pour le moment.</p>
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <h5>Aucun véhicule trouvé</h5>
+                <p>Essayez de modifier vos critères de recherche.</p>
+                <a href="/vehicles/" class="btn btn-primary">Voir tous les véhicules</a>
+            </div>
+        </div>
     {% endfor %}
 </div>
+
+<!-- Pagination -->
+{% if page_obj.has_other_pages %}
+<div class="d-flex justify-content-center mt-4">
+    <nav aria-label="Vehicle pagination">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}{% if available_only %}&available_only=on{% endif %}&sort={{ sort_by }}">Précédent</a>
+                </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}{% if available_only %}&available_only=on{% endif %}&sort={{ sort_by }}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}{% if available_only %}&available_only=on{% endif %}&sort={{ sort_by }}">Suivant</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endif %}
+
 {% endblock %}

@@ -9,6 +9,11 @@
             <div class="card-body">
                 <form method="POST">
                     {% csrf_token %}
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                    {% endif %}
                     <div class="mb-3">
                         <label class="form-label">Nom d'utilisateur</label>
                         <input type="text" name="username" class="form-control" required>
@@ -32,12 +37,6 @@
                             <option value="admin">🔧 Administrateur</option>
                         </select>
                     </div>
-                    {% if error %}
-                        <div class="alert alert-danger">{{ error }}</div>
-                    {% endif %}
-                    {% if success %}
-                        <div class="alert alert-success">{{ success }}</div>
-                    {% endif %}
                     <button type="submit" class="btn btn-success w-100">S'inscrire</button>
                     <a href="/login/" class="btn btn-secondary w-100 mt-2">Déjà un compte ? Connexion</a>
                 </form>

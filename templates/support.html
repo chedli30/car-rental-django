@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2 class="mb-4 text-center">🆘 Support & Contact</h2>
+        
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">📞 Contactez-nous</h5>
+                        <p class="card-text">
+                            <strong>📧 Email:</strong> support@location-voiture.com<br>
+                            <strong>📱 Téléphone:</strong> +216 XX XXX XXX<br>
+                            <strong>🕒 Horaires:</strong> Lun-Ven 9h-18h<br>
+                            <strong>📍 Adresse:</strong> Tunis, Tunisie
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title">❓ FAQ</h5>
+                        <div class="accordion" id="faqAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                        Comment réserver un véhicule ?
+                                    </button>
+                                </h2>
+                                <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Connectez-vous, choisissez un véhicule, sélectionnez les dates et confirmez la réservation.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                        Puis-je modifier ma réservation ?
+                                    </button>
+                                </h2>
+                                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Oui, via votre tableau de bord, vous pouvez modifier les dates avant le début de la location.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                        Quelle est la politique d'annulation ?
+                                    </button>
+                                </h2>
+                                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Vous pouvez annuler gratuitement jusqu'à 24h avant le début de la location.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">💬 Envoyez-nous un message</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label class="form-label">Nom complet</label>
+                                <input type="text" name="name" class="form-control" required value="{% if user.is_authenticated %}{{ user.get_full_name }}{% endif %}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" name="email" class="form-control" required value="{% if user.is_authenticated %}{{ user.email }}{% endif %}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Sujet</label>
+                                <select name="subject" class="form-select" required>
+                                    <option value="">Choisissez un sujet</option>
+                                    <option value="reservation">Problème de réservation</option>
+                                    <option value="paiement">Question de paiement</option>
+                                    <option value="vehicule">Problème avec le véhicule</option>
+                                    <option value="compte">Problème de compte</option>
+                                    <option value="autre">Autre</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Message</label>
+                                <textarea name="message" class="form-control" rows="5" required placeholder="Décrivez votre problème ou votre question..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Envoyer le message</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2 class="mb-4">⭐ Noter la Location</h2>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5>{{ rental.vehicle.brand }} {{ rental.vehicle.model }}</h5>
+                <p>📅 Période: {{ rental.start_date }} - {{ rental.end_date }}</p>
+                <p>💰 Prix total: {{ rental.total_price }} DT</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+                {% endif %}
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Votre note</label>
+                        <div class="rating">
+                            <input type="radio" id="star5" name="rating" value="5"><label for="star5">☆</label>
+                            <input type="radio" id="star4" name="rating" value="4"><label for="star4">☆</label>
+                            <input type="radio" id="star3" name="rating" value="3"><label for="star3">☆</label>
+                            <input type="radio" id="star2" name="rating" value="2"><label for="star2">☆</label>
+                            <input type="radio" id="star1" name="rating" value="1"><label for="star1">☆</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Votre commentaire (optionnel)</label>
+                        <textarea name="comment" class="form-control" rows="4" placeholder="Partagez votre expérience..."></textarea>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-fill">Soumettre l'avis</button>
+                        <a href="/rentals/dashboard/" class="btn btn-secondary">Plus tard</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+}
+
+.rating input {
+    display: none;
+}
+
+.rating label {
+    font-size: 2rem;
+    color: #ddd;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.rating input:checked ~ label,
+.rating label:hover,
+.rating label:hover ~ label {
+    color: #ffc107;
+}
+
+.rating input:checked ~ label {
+    color: #ffc107;
+}
+</style>
+{% endblock %}

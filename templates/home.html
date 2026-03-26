@@ -1,24 +1,149 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="text-center py-5">
-    <h1 class="display-4">🚗 Bienvenue à notre Agence de Location</h1>
-    <p class="lead">Trouvez la voiture parfaite pour votre prochain voyage</p>
-    <a href="/vehicles/" class="btn btn-primary btn-lg mt-3">Voir les Véhicules</a>
+<!-- Hero Section -->
+<div class="bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="display-4 fw-bold">🚗 Location de Véhicules</h1>
+                <p class="lead">Découvrez notre flotte de véhicules de qualité à des prix compétitifs. Réservez en ligne en quelques clics !</p>
+                <a href="/login/" class="btn btn-light btn-lg me-2">Se Connecter</a>
+                <a href="/rentals/register/" class="btn btn-outline-light btn-lg">S'inscrire</a>
+            </div>
+            <div class="col-md-6 text-center">
+                <img src="https://via.placeholder.com/500x300/007bff/ffffff?text=Location+de+Voitures" class="img-fluid rounded" alt="Véhicules">
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="row mt-5">
-    <div class="col-md-4 text-center">
-        <h3>🚙 Large Choix</h3>
-        <p>Des véhicules pour tous les besoins</p>
-    </div>
-    <div class="col-md-4 text-center">
-        <h3>💰 Prix Compétitifs</h3>
-        <p>Les meilleurs tarifs du marché</p>
-    </div>
-    <div class="col-md-4 text-center">
-        <h3>📋 Historique</h3>
-        <p>Suivez toutes vos locations</p>
+<!-- Statistics Section -->
+<div class="container py-5">
+    <div class="row text-center">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h2 class="text-primary mb-0">50+</h2>
+                    <p class="text-muted mb-0">Véhicules</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h2 class="text-success mb-0">1000+</h2>
+                    <p class="text-muted mb-0">Locations</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h2 class="text-warning mb-0">500+</h2>
+                    <p class="text-muted mb-0">Clients</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h2 class="text-info mb-0">4.8/5</h2>
+                    <p class="text-muted mb-0">Note Moyenne</p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<!-- Features Section -->
+<div class="bg-light py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Pourquoi nous choisir ?</h2>
+        <div class="row">
+            <div class="col-md-4 text-center mb-4">
+                <div class="mb-3">
+                    <span style="font-size: 3rem;">🚙</span>
+                </div>
+                <h4>Large Choix</h4>
+                <p>Une flotte diversifiée de véhicules récents et bien entretenus pour tous vos besoins.</p>
+            </div>
+            <div class="col-md-4 text-center mb-4">
+                <div class="mb-3">
+                    <span style="font-size: 3rem;">💰</span>
+                </div>
+                <h4>Prix Compétitifs</h4>
+                <p>Des tarifs transparents et compétitifs, sans frais cachés.</p>
+            </div>
+            <div class="col-md-4 text-center mb-4">
+                <div class="mb-3">
+                    <span style="font-size: 3rem;">📱</span>
+                </div>
+                <h4>Réservation Facile</h4>
+                <p>Réservez en ligne 24/7 depuis votre ordinateur ou mobile.</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 text-center mb-4">
+                <div class="mb-3">
+                    <span style="font-size: 3rem;">🔧</span>
+                </div>
+                <h4>Service Client</h4>
+                <p>Une équipe disponible pour vous accompagner avant, pendant et après votre location.</p>
+            </div>
+            <div class="col-md-4 text-center mb-4">
+                <div class="mb-3">
+                    <span style="font-size: 3rem;">🛡️</span>
+                </div>
+                <h4>Sécurité</h4>
+                <p>Véhicules assurés et contrôlés régulièrement pour votre tranquillité.</p>
+            </div>
+            <div class="col-md-4 text-center mb-4">
+                <div class="mb-3">
+                    <span style="font-size: 3rem;">⭐</span>
+                </div>
+                <h4>Avis Clients</h4>
+                <p>Consultez les retours de nos clients satisfaits.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div class="bg-primary text-white py-5">
+    <div class="container text-center">
+        <h2 class="mb-3">Prêt à réserver votre véhicule ?</h2>
+        <p class="lead mb-4">Rejoignez des milliers de clients satisfaits</p>
+        <a href="/rentals/register/" class="btn btn-light btn-lg me-3">Créer un compte</a>
+        <a href="/login/" class="btn btn-outline-light btn-lg">Se connecter</a>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-dark text-white py-4 mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>🚗 Location de Voitures</h5>
+                <p>Votre partenaire de confiance pour la location de véhicules en Tunisie.</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Contact</h5>
+                <p>📧 contact@location-voiture.com<br>
+                📱 +216 XX XXX XXX<br>
+                📍 Tunis, Tunisie</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Liens utiles</h5>
+                <p><a href="/rentals/support/" class="text-white">Support</a><br>
+                <a href="/rentals/register/" class="text-white">S'inscrire</a><br>
+                <a href="/login/" class="text-white">Se connecter</a></p>
+            </div>
+        </div>
+        <hr>
+        <div class="text-center">
+            <p>&copy; 2024 Location de Voitures. Tous droits réservés.</p>
+        </div>
+    </div>
+</footer>
 {% endblock %}

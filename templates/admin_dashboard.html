@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">📊 Tableau de Bord Administrateur</h1>
+            
+            <!-- Key Metrics -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h2 class="text-primary">{{ total_vehicles }}</h2>
+                            <p class="card-text">Véhicules</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h2 class="text-success">{{ total_rentals }}</h2>
+                            <p class="card-text">Total Locations</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h2 class="text-warning">{{ active_rentals }}</h2>
+                            <p class="card-text">Locations Actives</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h2 class="text-info">{{ total_revenue|floatformat:2 }} DT</h2>
+                            <p class="card-text">Revenus Totaux</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Recent Rentals -->
+        <div class="col-md-8 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">📋 Locations Récentes</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Client</th>
+                                    <th>Véhicule</th>
+                                    <th>Dates</th>
+                                    <th>Prix</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for rental in recent_rentals %}
+                                <tr>
+                                    <td>{{ rental.customer.get_full_name|default:rental.customer.username }}</td>
+                                    <td>{{ rental.vehicle.brand }} {{ rental.vehicle.model }}</td>
+                                    <td>{{ rental.start_date }} - {{ rental.end_date }}</td>
+                                    <td>{{ rental.total_price }} DT</td>
+                                    <td>
+                                        {% if rental.is_active %}
+                                            <span class="badge bg-success">Active</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Terminée</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Vehicles -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">🏆 Véhicules Populaires</h5>
+                </div>
+                <div class="card-body">
+                    {% for vehicle in top_vehicles %}
+                    <div class="mb-3">
+                        <h6>{{ vehicle.brand }} {{ vehicle.model }}</h6>
+                        <small class="text-muted">
+                            {{ vehicle.rental_count }} locations
+                            {% if vehicle.avg_rating %}
+                            | ⭐ {{ vehicle.avg_rating }}/5
+                            {% endif %}
+                        </small>
+                        <div class="progress mt-1" style="height: 5px;">
+                            <div class="progress-bar" role="progressbar" style="width: {{ vehicle.percentage }}%"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">⚡ Actions Rapides</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-2 mb-2">
+                            <a href="/admin/" class="btn btn-primary w-100">Admin Django</a>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <a href="/admin/rentals/rental/" class="btn btn-success w-100">Gérer Locations</a>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <a href="/admin/vehicles/vehicle/" class="btn btn-info w-100">Gérer Véhicules</a>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <a href="/admin/rentals/registrationrequest/" class="btn btn-warning w-100">Demandes</a>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <a href="/vehicles/" class="btn btn-secondary w-100">Voir Véhicules</a>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <a href="/rentals/dashboard/" class="btn btn-dark w-100">Mon Profil</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
