@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="min-height: 70vh; display: flex; align-items: center;">
+    <div class="row w-100">
+        <div class="col-md-8 offset-md-2 col-lg-6 offset-lg-3">
+            <!-- Error Card -->
+            <div class="card border-0 shadow-sm" style="border-top: 4px solid #EF4444;">
+                <div class="card-body p-5 text-center">
+                    <!-- Icon -->
+                    <div style="font-size: 64px; margin-bottom: 20px;">
+                        {% if error_type == 'expired' %}
+                            ⏰
+                        {% elif error_type == 'invalid' %}
+                            ❌
+                        {% elif error_type == 'already_verified' %}
+                            ✅
+                        {% else %}
+                            ⚠️
+                        {% endif %}
+                    </div>
+
+                    <!-- Title -->
+                    <h2 class="card-title mb-3" style="color: #1A56DB; font-weight: 700;">
+                        {% if error_type == 'expired' %}
+                            Lien expiré
+                        {% elif error_type == 'invalid' %}
+                            Lien invalide
+                        {% elif error_type == 'already_verified' %}
+                            Compte déjà vérifié
+                        {% else %}
+                            Erreur de vérification
+                        {% endif %}
+                    </h2>
+
+                    <!-- Error Message -->
+                    <div class="alert alert-danger" role="alert" style="text-align: left; margin-bottom: 30px;">
+                        {% if error_type == 'expired' %}
+                            <strong>Le lien de vérification a expiré</strong>
+                            <p style="margin-bottom: 0;">Ce lien est valide pendant 24 heures. Vous pouvez demander un nouveau lien ci-dessous.</p>
+                        {% elif error_type == 'invalid' %}
+                            <strong>Le lien de vérification est invalide ou corrompu</strong>
+                            <p style="margin-bottom: 0;">Il se peut que vous ayez cliqué sur un lien incorrect. Essayez de renvoyer un nouveau lien.</p>
+                        {% elif error_type == 'already_verified' %}
+                            <strong>Votre compte est déjà vérifié</strong>
+                            <p style="margin-bottom: 0;">Vous pouvez maintenant vous connecter avec vos identifiants.</p>
+                        {% else %}
+                            <strong>Une erreur s'est produite</strong>
+                            <p style="margin-bottom: 0;">Veuillez essayer à nouveau ou contacter le support.</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Helpful Information -->
+                    {% if error_type == 'already_verified' %}
+                        <div class="alert alert-success" role="alert" style="text-align: left; margin-bottom: 30px;">
+                            <strong>Excellent !</strong> Votre compte AutoLux est prêt à l'emploi. Connectez-vous et commencez à louer vos véhicules préférés.
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info" role="alert" style="text-align: left; margin-bottom: 30px;">
+                            <strong>💡 Que faire maintenant ?</strong>
+                            <ol style="margin-bottom: 0; margin-top: 10px;">
+                                <li>Demandez un nouveau lien de vérification ci-dessous</li>
+                                <li>Vérifiez votre boîte de réception (y compris les spams)</li>
+                                <li>Cliquez sur le lien dans l'email reçu</li>
+                                <li>Votre compte sera activé immédiatement</li>
+                            </ol>
+                        </div>
+                    {% endif %}
+
+                    <!-- Actions -->
+                    <div style="display: flex; gap: 10px; flex-direction: column;">
+                        {% if error_type != 'already_verified' %}
+                            {% if email %}
+                                <form method="POST" action="{% url 'resend_verification_email' %}" style="margin-bottom: 0;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="email" value="{{ email }}">
+                                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                                        🔄 Renvoyer l'email de vérification
+                                    </button>
+                                </form>
+                            {% else %}
+                                <a href="{% url 'register' %}" class="btn btn-primary">
+                                    📝 Recommencer l'inscription
+                                </a>
+                            {% endif %}
+                        {% else %}
+                            <a href="{% url 'login' %}" class="btn btn-primary">
+                                🔐 Se connecter
+                            </a>
+                        {% endif %}
+
+                        <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                            ← Retour à l'accueil
+                        </a>
+                    </div>
+
+                    <!-- Support Info -->
+                    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                        <p style="margin-bottom: 0; font-size: 14px; color: #666;">
+                            <strong>Vous avez toujours des problèmes ?</strong><br>
+                            Contactez notre support à 
+                            <a href="mailto:support@autolux.local" style="color: #1A56DB; text-decoration: none;">support@autolux.local</a>
+                            ou appelez <strong>+33 1 23 45 67 89</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Card -->
+            <div class="card border-0 mt-4" style="background-color: #f8f9fa;">
+                <div class="card-body p-4">
+                    <strong style="color: #1A56DB; display: block; margin-bottom: 15px;">❓ Questions fréquentes</strong>
+                    
+                    <div style="margin-bottom: 12px;">
+                        <strong style="color: #333; display: block; font-size: 14px;">Combien de temps avant expiration du lien ?</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 13px; color: #666;">24 heures. Assurez-vous de vérifier votre email dans ce délai.</p>
+                    </div>
+
+                    <div style="margin-bottom: 12px;">
+                        <strong style="color: #333; display: block; font-size: 14px;">Puis-je me connecter avec un compte non vérifié ?</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 13px; color: #666;">Non, vous devez vérifier votre email en premier. C'est rapide et sécurisé !</p>
+                    </div>
+
+                    <div>
+                        <strong style="color: #333; display: block; font-size: 14px;">Pourquoi n'ai-je pas reçu d'email ?</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 13px; color: #666;">Vérifiez votre dossier Spam/Promotions. Si vous le trouvez là, marquez-le comme "Non spam". Sinon, demandez un nouveau lien.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,43 +1,275 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion de Location de Voitures</title>
+    <title>{% block title %}AutoLux - Location de Voitures Premium{% endblock %}</title>
+    <meta name="description" content="Location de voitures premium en Tunisie. Réservez en ligne facilement.">
+    
+    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Modern Stylesheet -->
+    <link rel="stylesheet" href="{% static 'css/modern.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+    <style>
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="/">🚗 Location de Voitures</a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="/vehicles/">Véhicules</a>
-                {% if user.is_authenticated %}
-                    {% if user.is_staff %}
-                        <a class="nav-link" href="/rentals/admin-dashboard/">Admin</a>
+    
+    <!-- STICKY NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-car"></i> AutoLux
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarMenu">
+                <ul class="navbar-nav ms-auto align-items-lg-center gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/vehicles/">
+                            <i class="fas fa-car"></i> Véhicules
+                        </a>
+                    </li>
+                    
+                    <!-- Theme Toggle Button -->
+                    <li class="nav-item">
+                        <button id="themeToggleBtn" class="nav-link theme-toggle-btn" style="background: none; border: none; cursor: pointer;" title="Toggle theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </li>
+                    
+                    {% if user.is_authenticated %}
+                        {% if user.is_staff %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="/rentals/admin-dashboard/">
+                                    <i class="fas fa-chart-line"></i> Admin
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="/rentals/dashboard/">
+                                    <i class="fas fa-home"></i> Dashboard
+                                </a>
+                            </li>
+                        {% endif %}
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="/rentals/history/">
+                                <i class="fas fa-history"></i> Mes Locations
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle"></i> {{ user.username|truncatewords:1 }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown" style="border: 1px solid #E5E7EB; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                <li><a class="dropdown-item" href="/rentals/profile/"><i class="fas fa-cog"></i> Profil</a></li>
+                                <li><a class="dropdown-item" href="/rentals/support/"><i class="fas fa-headset"></i> Support</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form id="logoutForm" method="POST" action="/logout/" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item" style="border:none;background:none;cursor:pointer;text-align:left;color:#EF4444;" onclick="confirmLogout(event)">
+                                            <i class="fas fa-sign-out-alt"></i> Déconnexion
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
                     {% else %}
-                        <a class="nav-link" href="/rentals/dashboard/">Tableau de Bord</a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/login/">
+                                <i class="fas fa-sign-in-alt"></i> Connexion
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-primary btn-sm" href="/rentals/register/">
+                                <i class="fas fa-user-plus"></i> S'inscrire
+                            </a>
+                        </li>
                     {% endif %}
-                    <a class="nav-link" href="/rentals/history/">Mes Locations</a>
-                    <a class="nav-link" href="/rentals/profile/">Mon Profil</a>
-                    <a class="nav-link" href="/rentals/support/">Support</a>
-                    <form method="POST" action="/logout/" style="display:inline;">
-                    {% csrf_token %}
-                     <button type="submit" class="nav-link btn btn-link" style="color:white;">Déconnexion</button>
-</form>
-                {% else %}
-                    <a class="nav-link" href="/login/">Connexion</a>
-                    <a class="nav-link" href="/rentals/register/">S'inscrire</a>
-                {% endif %}
+                </ul>
             </div>
         </div>
     </nav>
 
-    <div class="container mt-4">
-        {% block content %}
-        {% endblock %}
+    <!-- ALERT MESSAGES -->
+    {% if messages %}
+    <div class="container-fluid px-4" style="margin-top: 1rem; margin-bottom: 1rem;">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} d-flex align-items-center gap-2" role="alert" style="border-left: 4px solid; margin-bottom: 1rem;">
+            {% if message.tags == 'success' %}
+                <i class="fas fa-check-circle"></i>
+            {% elif message.tags == 'error' %}
+                <i class="fas fa-exclamation-circle"></i>
+            {% elif message.tags == 'warning' %}
+                <i class="fas fa-exclamation-triangle"></i>
+            {% else %}
+                <i class="fas fa-info-circle"></i>
+            {% endif %}
+            <span>{{ message }}</span>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content" style="background: #F8F9FA;">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="logout-modal-overlay">
+        <div class="logout-modal-content">
+            <div class="logout-modal-header">
+                <div class="logout-modal-icon">
+                    <i class="fas fa-sign-out-alt"></i>
+                </div>
+                <h3>Déconnexion</h3>
+            </div>
+            <div class="logout-modal-body">
+                <p>Êtes-vous sûr de vouloir vous déconnecter ?</p>
+                <p style="font-size: 0.85rem; color: var(--color-text-secondary); margin-top: 1rem;">Vous pourrez vous reconnecter à tout moment.</p>
+            </div>
+            <div class="logout-modal-footer">
+                <button class="logout-btn-cancel" onclick="cancelLogout()">
+                    <i class="fas fa-times"></i> Annuler
+                </button>
+                <button class="logout-btn-confirm" onclick="submitLogout()">
+                    <i class="fas fa-check"></i> Déconnexion
+                </button>
+            </div>
+        </div>
     </div>
 
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <h4><i class="fas fa-car"></i> AutoLux</h4>
+                    <p style="font-size: 0.875rem; color: #6B7280;">Votre plateforme de confiance pour louer des véhicules premium en Tunisie.</p>
+                </div>
+                <div class="footer-column">
+                    <h4>Liens Rapides</h4>
+                    <a href="/vehicles/" class="footer-link">Véhicules</a>
+                    <a href="/about/" class="footer-link">À propos</a>
+                    <a href="/contact/" class="footer-link">Contact</a>
+                    <a href="/rentals/support/" class="footer-link">Support</a>
+                </div>
+                <div class="footer-column">
+                    <h4>Légal</h4>
+                    <a href="#" class="footer-link">Conditions d'utilisation</a>
+                    <a href="#" class="footer-link">Politique de confidentialité</a>
+                    <a href="#" class="footer-link">Mentions légales</a>
+                </div>
+                <div class="footer-column">
+                    <h4>Contact</h4>
+                    <p style="font-size: 0.875rem; color: #6B7280;">
+                        <i class="fas fa-phone"></i> +216 71 000 000<br>
+                        <i class="fas fa-envelope"></i> info@autolux.tn<br>
+                        <i class="fas fa-map-marker-alt"></i> Tunis, Tunisie
+                    </p>
+                </div>
+            </div>
+            <div class="footer-divider">
+                <p>&copy; 2026 AutoLux. Tous droits réservés. Conçu avec <i class="fas fa-heart" style="color: #EF4444;"></i> par notre équipe.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
+    
+    <!-- Theme Toggle Script -->
+    <script>
+        // Initialize theme on page load
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeButton(savedTheme);
+        }
+
+        // Update button icon based on theme
+        function updateThemeButton(theme) {
+            const btn = document.getElementById('themeToggleBtn');
+            if (btn) {
+                if (theme === 'dark') {
+                    btn.innerHTML = '<i class="fas fa-sun"></i>';
+                    btn.style.color = '#FFD700';
+                } else {
+                    btn.innerHTML = '<i class="fas fa-moon"></i>';
+                    btn.style.color = 'inherit';
+                }
+            }
+        }
+
+        // Toggle theme function
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeButton(newTheme);
+        }
+
+        // Add event listener to theme toggle button
+        document.addEventListener('DOMContentLoaded', function() {
+            initTheme();
+            const btn = document.getElementById('themeToggleBtn');
+            if (btn) {
+                btn.addEventListener('click', toggleTheme);
+            }
+        });
+
+        // Logout confirmation function
+        function confirmLogout(event) {
+            event.preventDefault();
+            document.getElementById('logoutModal').classList.add('show');
+        }
+
+        // Cancel logout
+        function cancelLogout() {
+            document.getElementById('logoutModal').classList.remove('show');
+        }
+
+        // Submit logout
+        function submitLogout() {
+            document.getElementById('logoutForm').submit();
+        }
+
+        // Close modal on background click
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('logoutModal');
+            if (modal) {
+                modal.addEventListener('click', function(event) {
+                    if (event.target === modal) {
+                        cancelLogout();
+                    }
+                });
+            }
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

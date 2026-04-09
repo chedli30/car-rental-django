@@ -2,67 +2,91 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-6">
-        <h2 class="mb-4">📅 Réserver un Véhicule</h2>
+    <div class="col-md-7 col-lg-6">
 
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5>{{ vehicle.brand }} {{ vehicle.model }}</h5>
-                <p>💰 <strong>{{ vehicle.price_per_day }} DT/jour</strong></p>
+        <!-- Header -->
+        <div class="mb-4">
+            <h2 class="section-title mb-1">Réserver un Véhicule</h2>
+            <p class="text-secondary mt-3">Choisissez vos dates pour finaliser la réservation.</p>
+        </div>
+
+        <!-- Vehicle summary -->
+        <div class="glass-card p-4 mb-4" style="border-left:4px solid var(--blue);">
+            <div class="d-flex align-items-center gap-3">
+                <div class="feature-icon blue" style="flex-shrink:0;">
+                    <i class="fa-solid fa-car-side"></i>
+                </div>
+                <div>
+                    <div style="font-weight:700;font-size:1.05rem;font-family:'Plus Jakarta Sans',sans-serif;">{{ vehicle.brand }} {{ vehicle.model }}</div>
+                    <div style="font-size:.875rem;color:var(--text-secondary);">
+                        <span class="text-gradient" style="font-weight:800;font-size:1.1rem;">{{ vehicle.price_per_day }} DT</span>
+                        <span style="color:var(--text-muted);">/jour</span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <form method="POST">
-            {% csrf_token %}
+        <!-- Form -->
+        <div class="glass-card p-4 p-md-5">
             {% if messages %}
             {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            <div class="alert alert-{{ message.tags }} mb-4" style="font-size:.875rem;">{{ message }}</div>
             {% endfor %}
             {% endif %}
-            <div class="mb-3">
-                <label class="form-label">Date de début</label>
-                <input type="date" name="start_date" class="form-control" required value="{{ request.GET.start_date }}">
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Date de fin</label>
-                <input type="date" name="end_date" class="form-control" required value="{{ request.GET.end_date }}">
-            </div>
-            <div class="mb-3">
-                <div class="alert alert-info">
-                    <strong>Prix estimé: <span id="estimated-price">{{ vehicle.price_per_day }} DT</span></strong>
-                    <small class="text-muted">(Prix par jour × nombre de jours)</small>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label"><i class="fa-regular fa-calendar me-1"></i>Date de début</label>
+                    <input type="date" name="start_date" id="startDate" class="form-control" required value="{{ request.GET.start_date }}">
                 </div>
-            </div>
-            <button type="submit" class="btn btn-primary w-100">Confirmer la Réservation</button>
-            <a href="/vehicles/" class="btn btn-secondary w-100 mt-2">Annuler</a>
-        </form>
+                <div class="mb-3">
+                    <label class="form-label"><i class="fa-solid fa-calendar-check me-1"></i>Date de fin</label>
+                    <input type="date" name="end_date" id="endDate" class="form-control" required value="{{ request.GET.end_date }}">
+                </div>
+
+                <!-- Price estimate -->
+                <div class="p-3 mb-4" style="background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:var(--r-md);">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span style="font-size:.875rem;color:var(--text-secondary);">Prix estimé</span>
+                        <strong id="estimated-price" style="font-size:1.25rem;color:var(--blue);">{{ vehicle.price_per_day }} DT</strong>
+                    </div>
+                    <div style="font-size:.75rem;color:var(--text-muted);margin-top:.25rem;">Prix par jour × nombre de jours</div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 mb-2" style="padding:.75rem;">
+                    <i class="fa-solid fa-check me-2"></i>Confirmer la Réservation
+                </button>
+                <a href="/vehicles/" class="btn btn-secondary w-100">
+                    <i class="fa-solid fa-arrow-left me-2"></i>Retour aux Véhicules
+                </a>
+            </form>
+        </div>
+
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const startDateInput = document.querySelector('input[name="start_date"]');
-    const endDateInput = document.querySelector('input[name="end_date"]');
-    const priceDisplay = document.getElementById('estimated-price');
-    const pricePerDay = {{ vehicle.price_per_day }};
-    
-    function calculatePrice() {
-        const startDate = new Date(startDateInput.value);
-        const endDate = new Date(endDateInput.value);
-        
-        if (startDate && endDate && endDate > startDate) {
-            const timeDiff = endDate.getTime() - startDate.getTime();
-            const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
-            const totalPrice = daysDiff * pricePerDay;
-            priceDisplay.textContent = totalPrice + ' DT';
+    const startInput = document.getElementById('startDate');
+    const endInput   = document.getElementById('endDate');
+    const priceEl    = document.getElementById('estimated-price');
+    const ppd        = {{ vehicle.price_per_day }};
+
+    function calc() {
+        const s = new Date(startInput.value), e = new Date(endInput.value);
+        if (s && e && e > s) {
+            const days = Math.ceil((e - s) / 86400000);
+            priceEl.textContent = (days * ppd).toFixed(2) + ' DT';
         } else {
-            priceDisplay.textContent = pricePerDay + ' DT';
+            priceEl.textContent = ppd + ' DT';
         }
     }
-    
-    startDateInput.addEventListener('change', calculatePrice);
-    endDateInput.addEventListener('change', calculatePrice);
-    
-    // Calculate initial price if dates are pre-filled
-    calculatePrice();
+    startInput.addEventListener('change', calc);
+    endInput.addEventListener('change', calc);
+    calc();
 });
-</script>{% endblock %}
+</script>
+{% endblock %}

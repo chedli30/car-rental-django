@@ -1,8 +1,41 @@
-from django.shortcuts import render, redirect
-from django.db.models import Q
+from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models import Q, Avg, Count
 from django.core.paginator import Paginator
 from .models import Vehicle
 from datetime import datetime
+from django.contrib.auth.decorators import login_required
+
+
+def vehicle_detail(request, vehicle_id):
+    vehicle = get_object_or_404(Vehicle, id=vehicle_id)
+    from rentals.models import Review
+    reviews = Review.objects.filter(vehicle=vehicle).select_related('customer').order_by('-created_at')
+    avg_rating = reviews.aggregate(avg=Avg('rating'))['avg']
+    
+    # Check availability for requested dates
+    start_date_str = request.GET.get('start_date', '')
+    end_date_str   = request.GET.get('end_date', '')
+    is_available   = None
+    if start_date_str and end_date_str:
+        try:
+            sd = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+            ed = datetime.strptime(end_date_str,   '%Y-%m-%d').date()
+            if sd < ed:
+                is_available = vehicle.is_available_for_dates(sd, ed)
+        except ValueError:
+            pass
+
+    context = {
+        'vehicle':        vehicle,
+        'reviews':        reviews,
+        'avg_rating':     round(avg_rating, 1) if avg_rating else None,
+        'review_count':   reviews.count(),
+        'is_available':   is_available,
+        'start_date':     start_date_str,
+        'end_date':       end_date_str,
+    }
+    return render(request, 'vehicle_detail.html', context)
+
 
 def vehicle_list(request):
     if not request.user.is_authenticated:

@@ -1,13 +1,11 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 
-def validate_positive_price(value):
-    if value <= 0:
-        raise ValidationError("Price per day must be positive")
 
 def validate_positive_price(value):
     if value <= 0:
         raise ValidationError("Price per day must be positive")
+
 
 class Vehicle(models.Model):
     model = models.CharField(max_length=100)

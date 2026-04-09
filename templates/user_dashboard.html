@@ -1,186 +1,180 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <h1 class="mb-4">👤 Mon Tableau de Bord</h1>
-            
-            <!-- Welcome Card -->
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">Bienvenue, {{ user.get_full_name|default:user.username }}!</h5>
-                    <p class="card-text">Gérez vos réservations et consultez votre historique de location.</p>
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="text-center">
-                                <h3 class="text-primary">{{ total_rentals }}</h3>
-                                <small class="text-muted">Total Locations</small>
-                            </div>
+<!-- Header -->
+<div class="mb-4">
+    <h2 class="section-title mb-1">Tableau de Bord</h2>
+    <p class="text-secondary mb-0">Bienvenue, <strong style="color:var(--text-primary);">{{ user.get_full_name|default:user.username }}</strong> — gérez vos réservations ici.</p>
+</div>
+
+<!-- Stat Tiles -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="stat-tile">
+            <div class="stat-number">{{ total_rentals }}</div>
+            <div class="stat-label">Total Locations</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-tile">
+            <div class="stat-number" style="background:linear-gradient(135deg,var(--emerald),#34d399);-webkit-background-clip:text;background-clip:text;">{{ active_rentals|length }}</div>
+            <div class="stat-label">En Cours</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-tile">
+            <div class="stat-number" style="background:linear-gradient(135deg,var(--amber),#fbbf24);-webkit-background-clip:text;background-clip:text;">{{ upcoming_rentals|length }}</div>
+            <div class="stat-label">À Venir</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-tile">
+            <div class="stat-number" style="background:linear-gradient(135deg,var(--sky),#38bdf8);-webkit-background-clip:text;background-clip:text;">{{ total_spent|floatformat:0 }}</div>
+            <div class="stat-label">DT Dépensé</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Active Rentals -->
+    <div class="col-md-6">
+        <div class="glass-card p-4 h-100">
+            <h5 class="mb-3 d-flex align-items-center gap-2">
+                <span style="width:9px;height:9px;border-radius:50%;background:var(--emerald);display:inline-block;"></span>
+                <i class="fa-solid fa-car-side text-accent-emerald"></i>
+                Locations Actives
+            </h5>
+            {% if active_rentals %}
+                {% for rental in active_rentals %}
+                <div class="rental-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6>{{ rental.vehicle.brand }} {{ rental.vehicle.model }}</h6>
+                            <div class="dates"><i class="fa-regular fa-calendar me-1"></i>{{ rental.start_date }} → {{ rental.end_date }}</div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="text-center">
-                                <h3 class="text-success">{{ total_spent|floatformat:2 }} DT</h3>
-                                <small class="text-muted">Total Dépensé</small>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="text-center">
-                                <h3 class="text-info">{{ active_rentals|length }}</h3>
-                                <small class="text-muted">Locations Actives</small>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="text-center">
-                                <h3 class="text-warning">{{ upcoming_rentals|length }}</h3>
-                                <small class="text-muted">Locations à Venir</small>
-                            </div>
+                        <div class="text-end">
+                            <div class="price">{{ rental.total_price }} DT</div>
+                            <span class="badge bg-success mt-1">En cours</span>
                         </div>
                     </div>
                 </div>
-            </div>
+                {% endfor %}
+            {% else %}
+                <div class="text-center py-4">
+                    <div style="width:52px;height:52px;border-radius:50%;background:var(--bg-elevated);display:flex;align-items:center;justify-content:center;margin:0 auto .75rem;font-size:1.4rem;color:var(--text-muted);">
+                        <i class="fa-solid fa-car-on"></i>
+                    </div>
+                    <p class="text-secondary mb-0" style="font-size:.875rem;">Aucune location active</p>
+                </div>
+            {% endif %}
         </div>
     </div>
 
-    <div class="row">
-        <!-- Active Rentals -->
-        <div class="col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0">🚗 Locations Actives</h5>
-                </div>
-                <div class="card-body">
-                    {% if active_rentals %}
-                        {% for rental in active_rentals %}
-                        <div class="mb-3 p-3 border rounded">
+    <!-- Upcoming Rentals -->
+    <div class="col-md-6">
+        <div class="glass-card p-4 h-100">
+            <h5 class="mb-3">
+                <i class="fa-solid fa-calendar-days me-2 text-accent-amber"></i>Locations à Venir
+            </h5>
+            {% if upcoming_rentals %}
+                {% for rental in upcoming_rentals %}
+                <div class="rental-item">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
                             <h6>{{ rental.vehicle.brand }} {{ rental.vehicle.model }}</h6>
-                            <p class="mb-1">
-                                <small class="text-muted">
-                                    Du {{ rental.start_date }} au {{ rental.end_date }}
-                                </small>
-                            </p>
-                            <p class="mb-2">
-                                <strong>{{ rental.total_price }} DT</strong>
-                            </p>
-                            <span class="badge bg-success">En cours</span>
+                            <div class="dates"><i class="fa-regular fa-calendar me-1"></i>{{ rental.start_date }} → {{ rental.end_date }}</div>
                         </div>
-                        {% endfor %}
-                    {% else %}
-                        <p class="text-muted">Aucune location active.</p>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-
-        <!-- Upcoming Rentals -->
-        <div class="col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-header bg-warning text-dark">
-                    <h5 class="mb-0">📅 Locations à Venir</h5>
-                </div>
-                <div class="card-body">
-                    {% if upcoming_rentals %}
-                        {% for rental in upcoming_rentals %}
-                        <div class="mb-3 p-3 border rounded">
-                            <h6>{{ rental.vehicle.brand }} {{ rental.vehicle.model }}</h6>
-                            <p class="mb-1">
-                                <small class="text-muted">
-                                    Du {{ rental.start_date }} au {{ rental.end_date }}
-                                </small>
-                            </p>
-                            <p class="mb-2">
-                                <strong>{{ rental.total_price }} DT</strong>
-                            </p>
-                            <div class="btn-group btn-group-sm">
-                                <a href="/rentals/modify/{{ rental.id }}/" class="btn btn-outline-primary">Modifier</a>
-                                <a href="/rentals/cancel/{{ rental.id }}/" class="btn btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')">Annuler</a>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    {% else %}
-                        <p class="text-muted">Aucune location à venir.</p>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Recent Completed Rentals -->
-    <div class="row">
-        <div class="col-12 mb-4">
-            <div class="card">
-                <div class="card-header bg-secondary text-white">
-                    <h5 class="mb-0">📋 Locations Récentes</h5>
-                </div>
-                <div class="card-body">
-                    {% if completed_rentals %}
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Véhicule</th>
-                                        <th>Période</th>
-                                        <th>Prix</th>
-                                        <th>Statut</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for rental in completed_rentals %}
-                                    <tr>
-                                        <td>{{ rental.vehicle.brand }} {{ rental.vehicle.model }}</td>
-                                        <td>{{ rental.start_date }} - {{ rental.end_date }}</td>
-                                        <td>{{ rental.total_price }} DT</td>
-                                        <td>
-                                            {% if rental.is_active %}
-                                                <span class="badge bg-secondary">Terminée</span>
-                                            {% else %}
-                                                <span class="badge bg-dark">Annulée</span>
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            <a href="/rentals/review/{{ rental.id }}/" class="btn btn-sm btn-outline-info">Noter</a>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="text-center mt-3">
-                            <a href="/rentals/history/" class="btn btn-primary">Voir tout l'historique</a>
-                        </div>
-                    {% else %}
-                        <p class="text-muted">Aucune location terminée.</p>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">⚡ Actions Rapides</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-3 mb-2">
-                            <a href="/vehicles/" class="btn btn-primary w-100">🔍 Réserver un véhicule</a>
-                        </div>
-                        <div class="col-md-3 mb-2">
-                            <a href="/rentals/profile/" class="btn btn-secondary w-100">👤 Mon Profil</a>
-                        </div>
-                        <div class="col-md-3 mb-2">
-                            <a href="/rentals/history/" class="btn btn-info w-100">📋 Historique Complet</a>
-                        </div>
-                        <div class="col-md-3 mb-2">
-                            <a href="/support/" class="btn btn-warning w-100">🆘 Support</a>
+                        <div class="text-end">
+                            <div class="price">{{ rental.total_price }} DT</div>
+                            <span class="badge bg-warning mt-1">À venir</span>
                         </div>
                     </div>
+                    <div class="d-flex gap-2 mt-2">
+                        <a href="/rentals/modify/{{ rental.id }}/" class="btn btn-outline-primary btn-sm flex-fill">
+                            <i class="fa-solid fa-pen me-1"></i>Modifier
+                        </a>
+                        <a href="/rentals/cancel/{{ rental.id }}/" class="btn btn-outline-danger btn-sm flex-fill"
+                           onclick="return confirm('Annuler cette réservation ?')">
+                            <i class="fa-solid fa-xmark me-1"></i>Annuler
+                        </a>
+                    </div>
                 </div>
-            </div>
+                {% endfor %}
+            {% else %}
+                <div class="text-center py-4">
+                    <div style="width:52px;height:52px;border-radius:50%;background:var(--bg-elevated);display:flex;align-items:center;justify-content:center;margin:0 auto .75rem;font-size:1.4rem;color:var(--text-muted);">
+                        <i class="fa-solid fa-calendar-xmark"></i>
+                    </div>
+                    <p class="text-secondary mb-0" style="font-size:.875rem;">Aucune location à venir</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Completed Rentals Table -->
+<div class="glass-card p-4 mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0"><i class="fa-solid fa-clock-rotate-left me-2 text-accent-purple"></i>Locations Récentes</h5>
+        <a href="/rentals/history/" class="btn btn-secondary btn-sm">Voir tout <i class="fa-solid fa-arrow-right ms-1"></i></a>
+    </div>
+    {% if completed_rentals %}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Véhicule</th>
+                    <th>Période</th>
+                    <th>Prix</th>
+                    <th>Statut</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rental in completed_rentals %}
+                <tr>
+                    <td><strong>{{ rental.vehicle.brand }} {{ rental.vehicle.model }}</strong></td>
+                    <td><span class="text-secondary" style="font-size:.85rem;">{{ rental.start_date }} – {{ rental.end_date }}</span></td>
+                    <td><strong style="color:var(--blue);">{{ rental.total_price }} DT</strong></td>
+                    <td>
+                        {% if rental.is_active %}
+                            <span class="badge bg-secondary">Terminée</span>
+                        {% else %}
+                            <span class="badge bg-danger">Annulée</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="/rentals/review/{{ rental.id }}/" class="btn btn-outline-info btn-sm">
+                            <i class="fa-solid fa-star me-1"></i>Noter
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <div class="text-center py-4">
+            <p class="text-secondary mb-0" style="font-size:.875rem;">Aucune location terminée pour l'instant.</p>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Quick Actions -->
+<div class="glass-card p-4">
+    <h5 class="mb-3"><i class="fa-solid fa-bolt me-2 text-accent-amber"></i>Actions Rapides</h5>
+    <div class="row g-2">
+        <div class="col-6 col-md-3">
+            <a href="/vehicles/" class="btn btn-primary w-100"><i class="fa-solid fa-car me-2"></i>Réserver</a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="/rentals/profile/" class="btn btn-secondary w-100"><i class="fa-solid fa-user me-2"></i>Mon Profil</a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="/rentals/history/" class="btn btn-secondary w-100"><i class="fa-solid fa-list me-2"></i>Historique</a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="/rentals/support/" class="btn btn-secondary w-100"><i class="fa-solid fa-headset me-2"></i>Support</a>
         </div>
     </div>
 </div>

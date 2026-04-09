@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Contact - AutoLux{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1>Nous contacter</h1>
+            <p class="lead text-secondary">Des questions ? Notre équipe est disponible pour vous aider.</p>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div style="width: 60px; height: 60px; border-radius: 12px; background: #EBF2F9; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: #1A56DB; font-size: 2rem;">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h5>Adresse</h5>
+                    <p class="text-secondary">Rue Mohamed Ali<br>Tunis, Tunisie</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div style="width: 60px; height: 60px; border-radius: 12px; background: #EBF2F9; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: #1A56DB; font-size: 2rem;">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <h5>Téléphone</h5>
+                    <p class="text-secondary"><a href="tel:+21671000000" style="color: #1A56DB; text-decoration: none;">+216 71 000 000</a></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div style="width: 60px; height: 60px; border-radius: 12px; background: #EBF2F9; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: #1A56DB; font-size: 2rem;">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h5>Email</h5>
+                    <p class="text-secondary"><a href="mailto:info@autolux.tn" style="color: #1A56DB; text-decoration: none;">info@autolux.tn</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card">
+                <div class="card-body p-5">
+                    <h4 class="mb-4">Envoyez-nous un message</h4>
+                    <form method="POST" action="/rentals/support/">
+                        {% csrf_token %}
+                        <div class="form-group mb-3">
+                            <label class="form-label">Votre nom</label>
+                            <input type="text" name="name" class="form-control" required>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control" required>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label">Sujet</label>
+                            <input type="text" name="subject" class="form-control" required>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label class="form-label">Message</label>
+                            <textarea name="message" class="form-control" rows="5" placeholder="Décrivez votre question..." required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-paper-plane"></i> Envoyer le message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

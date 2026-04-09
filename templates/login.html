@@ -1,27 +1,65 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% block title %}Connexion - AutoLux{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-4">
-        <h2 class="mb-4 text-center">🔐 Connexion</h2>
+<div class="container">
+    <div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+        <div class="col-md-6 col-lg-5">
+            <div class="card">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <div style="width: 60px; height: 60px; border-radius: 12px; background: #EBF2F9; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: #1A56DB; font-size: 2rem;">
+                            <i class="fas fa-sign-in-alt"></i>
+                        </div>
+                        <h2 style="margin-bottom: 0.5rem;">Connexion</h2>
+                        <p class="text-secondary">Accédez à votre compte AutoLux</p>
+                    </div>
 
-        <div class="card">
-            <div class="card-body">
-                <form method="POST">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label class="form-label">Nom d'utilisateur</label>
-                        <input type="text" name="username" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Mot de passe</label>
-                        <input type="password" name="password" class="form-control" required>
-                    </div>
-                    {% if form.errors %}
-                        <div class="alert alert-danger">Nom d'utilisateur ou mot de passe incorrect</div>
+                    {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}" role="alert">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
                     {% endif %}
-                    <button type="submit" class="btn btn-primary w-100">Se Connecter</button>
-                </form>
+
+                    {% if form.errors %}
+                    <div class="alert alert-error" role="alert">
+                        <i class="fas fa-exclamation-circle"></i>
+                        Nom d'utilisateur ou mot de passe incorrect.
+                    </div>
+                    {% endif %}
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="form-group mb-3">
+                            <label class="form-label">Nom d'utilisateur</label>
+                            <input type="text" name="username" class="form-control" required autofocus>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label class="form-label">Mot de passe</label>
+                            <input type="password" name="password" class="form-control" required id="passwordInput">
+                        </div>
+
+                        <div class="form-check mb-4">
+                            <input type="checkbox" name="remember" id="remember" class="form-check-input">
+                            <label class="form-check-label" for="remember">Se souvenir de moi</label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem;">
+                            <i class="fas fa-sign-in-alt"></i> Connexion
+                        </button>
+                    </form>
+
+                    <div class="text-center pt-3 border-top mt-4">
+                        <p class="text-secondary mb-0">
+                            Pas encore de compte ?
+                            <a href="/rentals/register/" class="text-accent fw-600">S'inscrire</a>
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

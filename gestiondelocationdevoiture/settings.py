@@ -20,12 +20,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+# TODO: Move this to environment variables for production
 SECRET_KEY = 'django-insecure-%rj0yf11fd2av2kmf%f*_^cd0ub&m_e5c0jzn02b5y2y(fn9$e'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']
 
 
 # Application definition
@@ -118,6 +119,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 LOGIN_REDIRECT_URL = '/'
@@ -125,3 +127,36 @@ LOGIN_URL = '/login/'
 LOGOUT_REDIRECT_URL = '/login/'
 ADMIN_LOGIN_URL = '/login/'
 FORCE_SCRIPT_NAME = ''
+
+# ── Additional Security Settings ────────────────────────
+# Prevent MIME type sniffing
+X_FRAME_OPTIONS = 'DENY'
+# Enforce HTTPS headers (set to True in production)
+SECURE_CONTENT_SECURITY_POLICY = {
+    'default-src': ("'self'",),
+    'script-src': ("'self'", "'unsafe-inline'", "cdn.jsdelivr.net", "cdnjs.cloudflare.com", "fonts.googleapis.com"),
+    'style-src': ("'self'", "'unsafe-inline'", "cdn.jsdelivr.net", "cdnjs.cloudflare.com", "fonts.googleapis.com"),
+    'font-src': ("'self'", "fonts.gstatic.com", "cdnjs.cloudflare.com"),
+}
+# Set secure cookies in production
+SESSION_COOKIE_SECURE = False  # Change to True in production with HTTPS
+CSRF_COOKIE_SECURE = False    # Change to True in production with HTTPS
+CSRF_COOKIE_HTTPONLY = True
+SESSION_COOKIE_HTTPONLY = True
+
+# ── Email Configuration ────────────────────────────────────
+# Gmail SMTP Configuration for email verification
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'besrourchedli7@gmail.com'
+EMAIL_HOST_PASSWORD = 'rykpcdfhhewfgqxm'  # Gmail App Password
+
+# Default sending email address
+DEFAULT_FROM_EMAIL = 'noreply@autolux.local'
+SERVER_EMAIL = 'noreply@autolux.local'
+
+# Email Token Timeout (in seconds) - Default 1 day
+PASSWORD_RESET_TIMEOUT = 86400  # 24 hours (used for email verification tokens too)

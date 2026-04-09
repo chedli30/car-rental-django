@@ -1,42 +1,60 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2 class="mb-4">📋 Historique de mes Locations</h2>
+<!-- Header -->
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h2 class="section-title mb-1">Historique de mes Locations</h2>
+        <p class="text-secondary mt-3 mb-0">Toutes vos réservations passées et en cours.</p>
+    </div>
+    <a href="/vehicles/" class="btn btn-primary">
+        <i class="fa-solid fa-car me-2"></i>Réserver
+    </a>
+</div>
 
 {% if rentals %}
-<div class="table-responsive">
-    <table class="table table-striped">
-        <thead class="table-dark">
-            <tr>
-                <th>Véhicule</th>
-                <th>Date début</th>
-                <th>Date fin</th>
-                <th>Prix total</th>
-                <th>Statut</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for rental in rentals %}
-            <tr>
-                <td>{{ rental.vehicle.brand }} {{ rental.vehicle.model }}</td>
-                <td>{{ rental.start_date }}</td>
-                <td>{{ rental.end_date }}</td>
-                <td>{{ rental.total_price }} DT</td>
-                <td>
-                    {% if rental.is_active %}
-                        <span class="badge bg-success">Active</span>
-                    {% else %}
-                        <span class="badge bg-secondary">Terminée</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="glass-card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Véhicule</th>
+                    <th>Date début</th>
+                    <th>Date fin</th>
+                    <th>Prix total</th>
+                    <th>Statut</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rental in rentals %}
+                <tr>
+                    <td>
+                        <div style="font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;">{{ rental.vehicle.brand }} {{ rental.vehicle.model }}</div>
+                    </td>
+                    <td><span style="font-size:.875rem;">{{ rental.start_date }}</span></td>
+                    <td><span style="font-size:.875rem;">{{ rental.end_date }}</span></td>
+                    <td><strong style="color:var(--blue);">{{ rental.total_price }} DT</strong></td>
+                    <td>
+                        {% if rental.is_active %}
+                            <span class="badge bg-success">Active</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Terminée</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% else %}
-    <div class="alert alert-info">Vous n'avez aucune location pour le moment.</div>
+<div class="glass-card p-5 text-center">
+    <div style="width:64px;height:64px;border-radius:50%;background:var(--bg-elevated);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.8rem;color:var(--text-muted);">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+    </div>
+    <h5 class="mb-2">Aucune location</h5>
+    <p class="text-secondary mb-4">Vous n'avez aucune location pour le moment.</p>
+    <a href="/vehicles/" class="btn btn-primary"><i class="fa-solid fa-car me-2"></i>Voir les Véhicules</a>
+</div>
 {% endif %}
-
-<a href="/vehicles/" class="btn btn-primary">Voir les Véhicules</a>
 {% endblock %}

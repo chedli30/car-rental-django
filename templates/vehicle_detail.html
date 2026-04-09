@@ -1,0 +1,308 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Back link -->
+<div class="mb-4">
+  <a href="/vehicles/" class="back-link">
+    <i class="fa-solid fa-arrow-left me-2"></i>Retour aux véhicules
+  </a>
+</div>
+
+<div class="row g-4">
+
+  <!-- ══ LEFT: Image + Key Info ══════════════════════════════════ -->
+  <div class="col-lg-5">
+
+    <!-- Vehicle Image -->
+    <div class="detail-img-wrap glass-card mb-4" style="padding:0;overflow:hidden;">
+      {% if vehicle.image %}
+        <img src="{{ vehicle.image.url }}" alt="{{ vehicle.brand }} {{ vehicle.model }}"
+             style="width:100%;height:320px;object-fit:cover;display:block;">
+      {% else %}
+        <div style="height:320px;background:linear-gradient(135deg,#1e2640 0%,#0f172a 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;">
+          <i class="fa-solid fa-car-side" style="font-size:5rem;color:rgba(255,255,255,0.1);"></i>
+          <span style="color:var(--text-muted);font-size:0.9rem;">Pas d'image disponible</span>
+        </div>
+      {% endif %}
+      <!-- Availability badge overlay -->
+      <div style="position:absolute;top:1rem;right:1rem;">
+        {% if is_available == True %}
+          <span class="avail-badge avail-yes"><i class="fa-solid fa-circle-check me-1"></i>Disponible</span>
+        {% elif is_available == False %}
+          <span class="avail-badge avail-no"><i class="fa-solid fa-circle-xmark me-1"></i>Non disponible</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Rating Summary Card -->
+    <div class="glass-card p-4 mb-4">
+      <div class="d-flex align-items-center gap-3 mb-3">
+        <div class="big-rating-num">{{ avg_rating|default:"—" }}</div>
+        <div>
+          <div class="stars-row mb-1">
+            {% if avg_rating %}
+              {% for i in "12345" %}
+                {% if forloop.counter <= avg_rating %}
+                  <i class="fa-solid fa-star" style="color:var(--accent-amber);"></i>
+                {% else %}
+                  <i class="fa-regular fa-star" style="color:var(--text-muted);"></i>
+                {% endif %}
+              {% endfor %}
+            {% else %}
+              {% for i in "12345" %}<i class="fa-regular fa-star" style="color:var(--text-muted);"></i>{% endfor %}
+            {% endif %}
+          </div>
+          <div style="font-size:0.8rem;color:var(--text-muted);">
+            {{ review_count }} avis client{{ review_count|pluralize }}
+          </div>
+        </div>
+      </div>
+      <!-- Rating bars -->
+      {% for star in "54321" %}
+      <div class="d-flex align-items-center gap-2 mb-1" style="font-size:0.78rem;">
+        <span style="color:var(--text-muted);width:12px;">{{ star }}</span>
+        <i class="fa-solid fa-star" style="color:var(--accent-amber);font-size:0.7rem;"></i>
+        <div style="flex:1;height:5px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden;">
+          <div style="height:100%;background:var(--accent-amber);border-radius:999px;width:{% if review_count %}{% widthratio reviews|length review_count 100 %}{% else %}0{% endif %}%;opacity:.7;"></div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Specs Card -->
+    <div class="glass-card p-4">
+      <h6 style="font-size:0.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);margin-bottom:1rem;">Caractéristiques</h6>
+      <div class="spec-row">
+        <span class="spec-icon" style="background:rgba(59,130,246,.15);color:var(--accent-blue);"><i class="fa-solid fa-tag"></i></span>
+        <div>
+          <div class="spec-label">Marque</div>
+          <div class="spec-val">{{ vehicle.brand }}</div>
+        </div>
+      </div>
+      <div class="spec-row">
+        <span class="spec-icon" style="background:rgba(139,92,246,.15);color:var(--accent-purple);"><i class="fa-solid fa-car"></i></span>
+        <div>
+          <div class="spec-label">Modèle</div>
+          <div class="spec-val">{{ vehicle.model }}</div>
+        </div>
+      </div>
+      <div class="spec-row">
+        <span class="spec-icon" style="background:rgba(245,158,11,.15);color:var(--accent-amber);"><i class="fa-solid fa-coins"></i></span>
+        <div>
+          <div class="spec-label">Tarif journalier</div>
+          <div class="spec-val" style="color:var(--accent-blue);">{{ vehicle.price_per_day }} DT/jour</div>
+        </div>
+      </div>
+      <div class="spec-row" style="border-bottom:none;padding-bottom:0;margin-bottom:0;">
+        <span class="spec-icon" style="background:rgba(16,185,129,.15);color:var(--accent-emerald);"><i class="fa-solid fa-circle-dot"></i></span>
+        <div>
+          <div class="spec-label">Disponibilité générale</div>
+          <div class="spec-val">
+            {% if vehicle.available %}
+              <span style="color:var(--accent-emerald);">En flotte active</span>
+            {% else %}
+              <span style="color:var(--accent-rose);">Hors service</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /col-lg-5 -->
+
+  <!-- ══ RIGHT: Details + Booking ════════════════════════════════ -->
+  <div class="col-lg-7">
+
+    <!-- Title -->
+    <div class="mb-4">
+      <div style="display:inline-flex;align-items:center;gap:.5rem;background:var(--gold-bg);border:1px solid var(--gold-border);color:var(--gold-light);padding:.3rem .85rem;border-radius:999px;font-size:.75rem;font-weight:600;margin-bottom:1rem;text-transform:uppercase;letter-spacing:.06em;">
+        <i class="fa-solid fa-car-side"></i> Détails du Véhicule
+      </div>
+      <h1 style="font-size:2rem;font-weight:800;margin-bottom:.3rem;font-family:'Syne',sans-serif;">{{ vehicle.brand }} <span class="text-gradient">{{ vehicle.model }}</span></h1>
+      <div style="font-size:1.5rem;font-weight:800;background:var(--grad-gold);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+        {{ vehicle.price_per_day }} DT <span style="font-size:.9rem;font-weight:400;-webkit-text-fill-color:var(--text-muted);color:var(--text-muted);">/ jour</span>
+      </div>
+    </div>
+
+    <!-- Booking Card -->
+    {% if user.is_authenticated %}
+    <div class="glass-card p-4 mb-4 booking-card">
+      <h5 style="font-size:.95rem;font-weight:700;margin-bottom:1.25rem;display:flex;align-items:center;gap:.5rem;">
+        <i class="fa-solid fa-calendar-days" style="color:var(--accent-blue);"></i> Réserver ce véhicule
+      </h5>
+      <form method="GET" action="/rentals/book/{{ vehicle.id }}/" id="bookingForm">
+        <div class="row g-3 mb-3">
+          <div class="col-6">
+            <label class="form-label">Date de début</label>
+            <input type="date" name="start_date" id="startDate" class="form-control" value="{{ start_date }}" required>
+          </div>
+          <div class="col-6">
+            <label class="form-label">Date de fin</label>
+            <input type="date" name="end_date" id="endDate" class="form-control" value="{{ end_date }}" required>
+          </div>
+        </div>
+        <!-- Price estimate -->
+        <div class="price-estimate mb-3" id="priceEstimate" style="display:none;">
+          <i class="fa-solid fa-receipt me-2" style="color:var(--accent-cyan);"></i>
+          Estimation : <strong id="estimateVal" style="color:var(--accent-blue);"></strong> DT pour <span id="estimateDays"></span> jour(s)
+        </div>
+        <!-- Check availability -->
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-secondary" onclick="checkAvailability()">
+            <i class="fa-solid fa-magnifying-glass me-2"></i>Vérifier disponibilité
+          </button>
+          <button type="submit" class="btn btn-primary flex-fill" id="bookBtn">
+            <i class="fa-solid fa-key me-2"></i>Réserver maintenant
+          </button>
+        </div>
+        <!-- Availability result -->
+        <div id="availResult" style="margin-top:.75rem;display:none;"></div>
+      </form>
+    </div>
+    {% else %}
+    <div class="glass-card p-4 mb-4 text-center">
+      <i class="fa-solid fa-lock" style="font-size:2rem;color:var(--accent-blue);margin-bottom:.75rem;display:block;"></i>
+      <h6>Connectez-vous pour réserver</h6>
+      <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:1rem;">Créez un compte ou connectez-vous pour réserver ce véhicule.</p>
+      <div class="d-flex gap-2 justify-content-center">
+        <a href="/login/" class="btn btn-primary">Se connecter</a>
+        <a href="/rentals/register/" class="btn btn-secondary">S'inscrire</a>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Features highlight -->
+    <div class="row g-3 mb-4">
+      <div class="col-4">
+        <div class="feature-pill">
+          <i class="fa-solid fa-shield-halved" style="color:var(--accent-blue);"></i>
+          <span>Assurance incluse</span>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="feature-pill">
+          <i class="fa-solid fa-road" style="color:var(--accent-emerald);"></i>
+          <span>Kilométrage illimité</span>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="feature-pill">
+          <i class="fa-solid fa-headset" style="color:var(--accent-purple);"></i>
+          <span>Support 24/7</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="glass-card p-4">
+      <h5 style="font-size:.95rem;font-weight:700;margin-bottom:1.25rem;display:flex;align-items:center;gap:.5rem;">
+        <i class="fa-solid fa-comments" style="color:var(--accent-amber);"></i>
+        Avis Clients
+        {% if review_count %}<span style="font-size:.75rem;background:rgba(245,158,11,.15);color:var(--accent-amber);border:1px solid rgba(245,158,11,.3);padding:.1rem .55rem;border-radius:999px;font-weight:600;">{{ review_count }}</span>{% endif %}
+      </h5>
+
+      {% if reviews %}
+        <div class="reviews-list">
+          {% for review in reviews %}
+          <div class="review-item {% if not forloop.last %}mb-3 pb-3{% endif %}" style="{% if not forloop.last %}border-bottom:1px solid var(--border-glass);{% endif %}">
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <div class="review-avatar">{{ review.customer.username|first|upper }}</div>
+              <div>
+                <div style="font-size:.85rem;font-weight:600;">{{ review.customer.get_full_name|default:review.customer.username }}</div>
+                <div style="font-size:.7rem;color:var(--text-muted);">{{ review.created_at|date:"d M Y" }}</div>
+              </div>
+              <div class="ms-auto stars-small">
+                {% for i in "12345" %}
+                  {% if forloop.counter <= review.rating %}
+                    <i class="fa-solid fa-star" style="color:var(--accent-amber);font-size:.7rem;"></i>
+                  {% else %}
+                    <i class="fa-regular fa-star" style="color:var(--text-muted);font-size:.7rem;"></i>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+            {% if review.comment %}
+              <p style="font-size:.85rem;color:var(--text-secondary);margin:0;padding-left:2.2rem;">{{ review.comment }}</p>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div style="text-align:center;padding:2rem 0;color:var(--text-muted);">
+          <i class="fa-regular fa-comment-dots" style="font-size:2.5rem;margin-bottom:.75rem;display:block;opacity:.4;"></i>
+          <p style="font-size:.85rem;margin:0;">Aucun avis pour l'instant. Soyez le premier à noter ce véhicule !</p>
+        </div>
+      {% endif %}
+    </div>
+
+  </div><!-- /col-lg-7 -->
+</div><!-- /row -->
+
+<style>
+  .back-link{color:var(--text-secondary);font-size:.88rem;font-weight:500;display:inline-flex;align-items:center;gap:.4rem;transition:color .2s;}
+  .back-link:hover{color:var(--gold);}
+  .avail-badge{display:inline-flex;align-items:center;padding:.3rem .85rem;border-radius:999px;font-size:.75rem;font-weight:700;}
+  .avail-yes{background:var(--emerald-bg);color:#4ade80;border:1px solid var(--emerald-border);}
+  .avail-no {background:var(--coral-bg);color:#fb7185;border:1px solid rgba(232,80,58,.35);}
+  .big-rating-num{font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;line-height:1;background:var(--grad-gold);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .spec-row{display:flex;align-items:center;gap:.9rem;padding:.75rem 0;border-bottom:1px solid rgba(255,255,255,.04);margin-bottom:.1rem;}
+  .spec-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.9rem;}
+  .spec-label{font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;}
+  .spec-val{font-size:.9rem;font-weight:600;color:var(--text-primary);}
+  .booking-card{border-color:var(--gold-border)!important;}
+  .price-estimate{background:var(--gold-bg);border:1px solid var(--gold-border);border-radius:var(--r-sm);padding:.6rem .9rem;font-size:.82rem;color:var(--text-secondary);}
+  .feature-pill{background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--r-md);padding:.75rem;display:flex;flex-direction:column;align-items:center;gap:.4rem;text-align:center;font-size:.72rem;color:var(--text-secondary);font-weight:500;}
+  .feature-pill i{font-size:1.2rem;}
+  .review-avatar{width:32px;height:32px;border-radius:50%;background:var(--grad-gold);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;color:#111;flex-shrink:0;}
+  .text-gradient{background:var(--grad-gold);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const pricePerDay = {{ vehicle.price_per_day }};
+
+  function calcEstimate() {
+    const sd = document.getElementById('startDate').value;
+    const ed = document.getElementById('endDate').value;
+    const el = document.getElementById('priceEstimate');
+    if (!sd || !ed) { el.style.display = 'none'; return; }
+    const days = Math.round((new Date(ed) - new Date(sd)) / 86400000);
+    if (days > 0) {
+      document.getElementById('estimateDays').textContent = days;
+      document.getElementById('estimateVal').textContent = (days * pricePerDay).toFixed(2);
+      el.style.display = 'block';
+    } else {
+      el.style.display = 'none';
+    }
+  }
+
+  document.getElementById('startDate')?.addEventListener('change', calcEstimate);
+  document.getElementById('endDate')?.addEventListener('change', calcEstimate);
+  calcEstimate(); // run on load if dates pre-filled
+
+  function checkAvailability() {
+    const sd = document.getElementById('startDate').value;
+    const ed = document.getElementById('endDate').value;
+    const res = document.getElementById('availResult');
+    if (!sd || !ed) {
+      res.style.display = 'block';
+      res.innerHTML = '<span style="color:var(--accent-amber);font-size:.82rem;"><i class="fa-solid fa-triangle-exclamation me-1"></i>Veuillez sélectionner les deux dates.</span>';
+      return;
+    }
+    // Redirect to same page with dates to trigger server-side check
+    window.location.href = '/vehicles/{{ vehicle.id }}/?start_date=' + sd + '&end_date=' + ed;
+  }
+
+  // Show availability result if returned by server
+  {% if is_available is not None %}
+  const availEl = document.getElementById('availResult');
+  availEl.style.display = 'block';
+  {% if is_available %}
+  availEl.innerHTML = '<span style="color:#34d399;font-size:.82rem;"><i class="fa-solid fa-circle-check me-1"></i>Ce véhicule est disponible pour vos dates !</span>';
+  {% else %}
+  availEl.innerHTML = '<span style="color:#fb7185;font-size:.82rem;"><i class="fa-solid fa-circle-xmark me-1"></i>Ce véhicule n\'est pas disponible pour ces dates.</span>';
+  {% endif %}
+  {% endif %}
+</script>
+{% endblock %}

@@ -1,128 +1,153 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2 class="mb-4">🚗 Véhicules Disponibles</h2>
-
-<!-- Search and Filter Form -->
-<div class="card mb-4">
-    <div class="card-body">
-        <form method="GET" class="row g-3">
-            <div class="col-md-3">
-                <label class="form-label">Rechercher</label>
-                <input type="text" name="search" class="form-control" placeholder="Marque, modèle..." value="{{ search_query }}">
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">Prix min</label>
-                <input type="number" name="min_price" class="form-control" placeholder="DT" value="{{ min_price }}">
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">Prix max</label>
-                <input type="number" name="max_price" class="form-control" placeholder="DT" value="{{ max_price }}">
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">Date début</label>
-                <input type="date" name="start_date" class="form-control" value="{{ start_date }}">
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">Date fin</label>
-                <input type="date" name="end_date" class="form-control" value="{{ end_date }}">
-            </div>
-            <div class="col-md-1 d-flex align-items-end">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="available_only" id="available_only" {% if available_only %}checked{% endif %}>
-                    <label class="form-check-label" for="available_only">
-                        Disponible
-                    </label>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">Trier par</label>
-                <select name="sort" class="form-select">
-                    <option value="price_asc" {% if sort_by == 'price_asc' %}selected{% endif %}>Prix croissant</option>
-                    <option value="price_desc" {% if sort_by == 'price_desc' %}selected{% endif %}>Prix décroissant</option>
-                    <option value="brand" {% if sort_by == 'brand' %}selected{% endif %}>Marque</option>
-                </select>
-            </div>
-            <div class="col-md-2 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary me-2">🔍 Rechercher</button>
-                <a href="/vehicles/" class="btn btn-secondary">🔄 Réinitialiser</a>
-            </div>
-        </form>
+<!-- Page Header -->
+<div class="d-flex align-items-center justify-content-between mb-4 mb-md-5">
+    <div>
+        <h2 class="section-title mb-1">Nos Véhicules</h2>
+        <p class="text-secondary mb-0" style="font-size:.88rem;margin-top:.4rem;">
+            <i class="fa-solid fa-circle-check me-1" style="color:var(--emerald);"></i>
+            {{ page_obj.paginator.count }} véhicule(s) disponibles
+        </p>
     </div>
 </div>
 
-<!-- Results Count -->
-<div class="mb-3">
-    <p class="text-muted">{{ page_obj.paginator.count }} véhicule(s) trouvé(s)</p>
+<!-- Filter Bar -->
+<div class="filter-bar mb-5">
+    <form method="GET" id="filterForm">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label"><i class="fa-solid fa-magnifying-glass me-1"></i>Rechercher</label>
+                <input type="text" name="search" class="form-control" placeholder="Marque, modèle..." value="{{ search_query }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Prix min (DT)</label>
+                <input type="number" name="min_price" class="form-control" placeholder="0" value="{{ min_price }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Prix max (DT)</label>
+                <input type="number" name="max_price" class="form-control" placeholder="∞" value="{{ max_price }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label"><i class="fa-regular fa-calendar me-1"></i>Date début</label>
+                <input type="date" name="start_date" class="form-control" value="{{ start_date }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label"><i class="fa-solid fa-calendar-check me-1"></i>Date fin</label>
+                <input type="date" name="end_date" class="form-control" value="{{ end_date }}">
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">Trier</label>
+                <select name="sort" class="form-select">
+                    <option value="price_asc"  {% if sort_by == 'price_asc' %}selected{% endif %}>Prix ↑</option>
+                    <option value="price_desc" {% if sort_by == 'price_desc' %}selected{% endif %}>Prix ↓</option>
+                    <option value="brand"      {% if sort_by == 'brand' %}selected{% endif %}>Marque</option>
+                </select>
+            </div>
+        </div>
+        <div class="row g-3 mt-1 align-items-center">
+            <div class="col-auto">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="available_only" id="available_only" {% if available_only %}checked{% endif %}>
+                    <label class="form-check-label" for="available_only" style="font-size:.85rem;color:var(--text-secondary);">Disponibles uniquement</label>
+                </div>
+            </div>
+            <div class="col-auto ms-auto">
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-magnifying-glass me-2"></i>Rechercher</button>
+                    <a href="/vehicles/" class="btn btn-secondary"><i class="fa-solid fa-rotate me-2"></i>Réinitialiser</a>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 
-<div class="row">
+<!-- Vehicle Grid -->
+<div class="row g-4">
     {% for vehicle in page_obj %}
-    <div class="col-md-4 mb-4">
-        <div class="card h-100">
+    <div class="col-md-4 col-sm-6">
+        <div class="vehicle-card">
             {% if vehicle.image %}
-                <img src="{{ vehicle.image.url }}" class="card-img-top" alt="{{ vehicle.brand }}" style="height: 200px; object-fit: cover;">
+                <img src="{{ vehicle.image.url }}" alt="{{ vehicle.brand }}" style="width:100%;height:200px;object-fit:cover;">
+            {% else %}
+                <div class="vehicle-img-placeholder">
+                    <i class="fa-solid fa-car-side" style="position:relative;z-index:1;color:rgba(232,168,56,0.12);"></i>
+                </div>
             {% endif %}
-            <div class="card-body d-flex flex-column">
-                <h5 class="card-title">{{ vehicle.brand }} {{ vehicle.model }}</h5>
-                <p class="card-text">
-                    💰 <strong>{{ vehicle.price_per_day }} DT/jour</strong>
+            <div class="card-body">
+                <div class="vehicle-name">{{ vehicle.brand }} {{ vehicle.model }}</div>
+                <div class="vehicle-price">{{ vehicle.price_per_day }} DT<span>/jour</span></div>
+                <div class="rating-row">
                     {% if vehicle.average_rating %}
-                    <br>
-                    ⭐ <strong>{{ vehicle.average_rating }}/5</strong> ({{ vehicle.review_count }} avis)
-                    {% endif %}
-                </p>
-                <div class="mt-auto">
-                    {% if user.is_authenticated %}
-                        <a href="/rentals/book/{{ vehicle.id }}/?start_date={{ start_date }}&end_date={{ end_date }}" class="btn btn-primary">Réserver</a>
-                        <a href="/vehicles/{{ vehicle.id }}/" class="btn btn-outline-info btn-sm">Détails</a>
+                        <span class="stars">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= vehicle.average_rating %}<i class="fa-solid fa-star"></i>{% else %}<i class="fa-regular fa-star"></i>{% endif %}
+                            {% endfor %}
+                        </span>
+                        <span>{{ vehicle.average_rating }}/5 ({{ vehicle.review_count }} avis)</span>
                     {% else %}
-                        <a href="/login/" class="btn btn-secondary">Connectez-vous pour réserver</a>
+                        <span><i class="fa-regular fa-star me-1"></i>Pas encore noté</span>
+                    {% endif %}
+                </div>
+                <div class="d-flex gap-2">
+                    {% if user.is_authenticated %}
+                        <a href="/rentals/book/{{ vehicle.id }}/?start_date={{ start_date }}&end_date={{ end_date }}" class="btn btn-primary flex-fill">
+                            <i class="fa-solid fa-key me-1"></i>Réserver
+                        </a>
+                        <a href="/vehicles/{{ vehicle.id }}/" class="btn btn-secondary">
+                            <i class="fa-solid fa-info"></i>
+                        </a>
+                    {% else %}
+                        <a href="/login/" class="btn btn-secondary w-100">
+                            <i class="fa-solid fa-right-to-bracket me-2"></i>Connectez-vous pour réserver
+                        </a>
                     {% endif %}
                 </div>
             </div>
         </div>
     </div>
     {% empty %}
-        <div class="col-12">
-            <div class="alert alert-info text-center">
-                <h5>Aucun véhicule trouvé</h5>
-                <p>Essayez de modifier vos critères de recherche.</p>
-                <a href="/vehicles/" class="btn btn-primary">Voir tous les véhicules</a>
-            </div>
+    <div class="col-12">
+        <div class="glass-card p-5 text-center">
+            <i class="fa-solid fa-car-burst" style="font-size:3rem;color:var(--text-muted);margin-bottom:1rem;display:block;"></i>
+            <h5 class="mb-2">Aucun véhicule trouvé</h5>
+            <p class="text-secondary mb-3">Essayez de modifier vos critères de recherche.</p>
+            <a href="/vehicles/" class="btn btn-primary">Voir tous les véhicules</a>
         </div>
+    </div>
     {% endfor %}
 </div>
 
 <!-- Pagination -->
 {% if page_obj.has_other_pages %}
-<div class="d-flex justify-content-center mt-4">
-    <nav aria-label="Vehicle pagination">
+<div class="d-flex justify-content-center mt-5">
+    <nav>
         <ul class="pagination">
             {% if page_obj.has_previous %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}{% if available_only %}&available_only=on{% endif %}&sort={{ sort_by }}">Précédent</a>
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}{% if available_only %}&available_only=on{% endif %}&sort={{ sort_by }}">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </a>
                 </li>
             {% endif %}
-
             {% for num in page_obj.paginator.page_range %}
                 {% if page_obj.number == num %}
                     <li class="page-item active"><span class="page-link">{{ num }}</span></li>
                 {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}{% if available_only %}&available_only=on{% endif %}&sort={{ sort_by }}">{{ num }}</a>
+                        <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}&sort={{ sort_by }}">{{ num }}</a>
                     </li>
                 {% endif %}
             {% endfor %}
-
             {% if page_obj.has_next %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}{% if available_only %}&available_only=on{% endif %}&sort={{ sort_by }}">Suivant</a>
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}{% if available_only %}&available_only=on{% endif %}&sort={{ sort_by }}">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </a>
                 </li>
             {% endif %}
         </ul>
     </nav>
 </div>
 {% endif %}
-
 {% endblock %}

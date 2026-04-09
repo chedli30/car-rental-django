@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="min-height: 70vh; display: flex; align-items: center;">
+    <div class="row w-100">
+        <div class="col-md-8 offset-md-2 col-lg-6 offset-lg-3">
+            <!-- Success Card -->
+            <div class="card border-0 shadow-sm" style="border-top: 4px solid #10B981;">
+                <div class="card-body p-5 text-center">
+                    <!-- Icon -->
+                    <div style="font-size: 64px; margin-bottom: 20px;">
+                        ✅
+                    </div>
+
+                    <!-- Title -->
+                    <h2 class="card-title mb-3" style="color: #1A56DB; font-weight: 700;">
+                        Vérification requise
+                    </h2>
+
+                    <!-- Message -->
+                    <p class="card-text text-muted mb-4" style="font-size: 16px;">
+                        Un email de vérification a été envoyé à :
+                    </p>
+
+                    <!-- Email Address -->
+                    <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 30px;">
+                        <p style="margin: 0; font-weight: 600; color: #1A56DB;">
+                            📧 {{ email }}
+                        </p>
+                    </div>
+
+                    <!-- Instructions -->
+                    <div class="alert alert-info" role="alert" style="text-align: left;">
+                        <strong>📋 Ce que vous devez faire :</strong>
+                        <ol style="margin-bottom: 0; margin-top: 10px;">
+                            <li>Vérifiez votre boîte de réception (et les spams)</li>
+                            <li>Cliquez sur le lien de vérification dans l'email</li>
+                            <li>Votre compte sera immédiatement activé</li>
+                            <li>Vous pourrez vous connecter et commencer à louer</li>
+                        </ol>
+                    </div>
+
+                    <!-- Expiration Notice -->
+                    <div class="alert alert-warning" role="alert">
+                        <strong>⏱️ Attention :</strong> Le lien de vérification expire dans <strong>24 heures</strong>.
+                    </div>
+
+                    <!-- Resend Email Link -->
+                    <div style="margin-bottom: 30px;">
+                        <form method="POST" action="{% url 'resend_verification_email' %}" style="margin-bottom: 15px;">
+                            {% csrf_token %}
+                            <input type="hidden" name="email" value="{{ email }}">
+                            <button type="submit" class="btn btn-outline-primary" style="width: 100%;">
+                                🔄 Renvoyer l'email de vérification
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- FAQ Section -->
+                    <div style="background-color: #ebf2f9; padding: 20px; border-radius: 8px; margin-bottom: 30px; text-align: left;">
+                        <strong style="color: #1A56DB; display: block; margin-bottom: 15px;">❓ Questions fréquentes</strong>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <strong style="color: #333; display: block; font-size: 14px;">Où est mon email ?</strong>
+                            <p style="margin: 5px 0 0 0; font-size: 13px; color: #666;">Vérifiez votre dossier Spams ou Promotions. Parfois les services de messagerie filent les emails de vérification.</p>
+                        </div>
+
+                        <div style="margin-bottom: 12px;">
+                            <strong style="color: #333; display: block; font-size: 14px;">Puis-je me connecter maintenant ?</strong>
+                            <p style="margin: 5px 0 0 0; font-size: 13px; color: #666;">Non, vous devez d'abord vérifier votre email. Cela ne prend que quelques secondes !</p>
+                        </div>
+
+                        <div>
+                            <strong style="color: #333; display: block; font-size: 14px;">Le lien a expiré ?</strong>
+                            <p style="margin: 5px 0 0 0; font-size: 13px; color: #666;">Cliquez sur "Renvoyer l'email" ci-dessus pour obtenir un nouveau lien.</p>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div style="display: flex; gap: 10px; flex-direction: column;">
+                        <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                            ← Retour à l'accueil
+                        </a>
+                        <a href="{% url 'contact' %}" class="btn btn-outline-primary">
+                            💬 Besoin d'aide ? Contactez-nous
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Support Card -->
+            <div class="card border-0 mt-4" style="background-color: #f8f9fa;">
+                <div class="card-body p-4 text-center">
+                    <p style="margin-bottom: 15px;">
+                        <strong>Des problèmes ?</strong>
+                    </p>
+                    <p style="margin-bottom: 0; font-size: 14px; color: #666;">
+                        Consultez notre <a href="{% url 'support' %}" style="color: #1A56DB; text-decoration: none;">page de support</a> ou contactez notre équipe à 
+                        <a href="mailto:support@autolux.local" style="color: #1A56DB; text-decoration: none;">support@autolux.local</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Resend Message -->
+{% if message %}
+<div class="alert alert-info alert-dismissible fade show" role="alert" style="margin-top: 20px;">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+
+{% endblock %}

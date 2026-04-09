@@ -1,4 +1,7 @@
-from django.db import models
+#!/usr/bin/env python
+"""Fix the rentals/models.py file"""
+
+models_content = '''from django.db import models
 from django.contrib.auth.models import User
 from vehicles.models import Vehicle
 from django.core.exceptions import ValidationError
@@ -76,3 +79,9 @@ def save_profile(sender, instance, **kwargs):
         instance.profile.save()
     else:
         Profile.objects.get_or_create(user=instance)
+'''
+
+with open('rentals/models.py', 'w', encoding='utf-8') as f:
+    f.write(models_content)
+
+print("✅ Fixed rentals/models.py successfully")

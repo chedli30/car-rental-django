@@ -1,149 +1,190 @@
 {% extends 'base.html' %}
 
-{% block content %}
-<!-- Hero Section -->
-<div class="bg-primary text-white py-5">
+{% block hero %}
+<!-- ════════════════════════════════ HERO ════════════════════════════════ -->
+<section class="hero-section">
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-md-6">
-                <h1 class="display-4 fw-bold">🚗 Location de Véhicules</h1>
-                <p class="lead">Découvrez notre flotte de véhicules de qualité à des prix compétitifs. Réservez en ligne en quelques clics !</p>
-                <a href="/login/" class="btn btn-light btn-lg me-2">Se Connecter</a>
-                <a href="/rentals/register/" class="btn btn-outline-light btn-lg">S'inscrire</a>
+            <!-- Left content -->
+            <div class="col-lg-6">
+                <div class="hero-badge">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Service Premium · Tunisie
+                </div>
+                <h1 class="hero-title">
+                    Louez votre<br>
+                    <span class="gradient-text">Voiture Idéale</span>
+                </h1>
+                <p class="hero-sub">
+                    Découvrez une flotte exceptionnelle à des prix compétitifs.
+                    Réservez en quelques clics, partez l'esprit tranquille.
+                </p>
+                <div class="hero-actions d-flex flex-wrap gap-3">
+                    {% if user.is_authenticated %}
+                        <a href="/vehicles/" class="btn btn-primary btn-lg">
+                            <i class="fa-solid fa-search me-2"></i>Explorer les Véhicules
+                        </a>
+                        <a href="/rentals/dashboard/" class="btn btn-secondary btn-lg">
+                            <i class="fa-solid fa-table-columns me-2"></i>Mon Dashboard
+                        </a>
+                    {% else %}
+                        <a href="/vehicles/" class="btn btn-primary btn-lg">
+                            <i class="fa-solid fa-search me-2"></i>Voir les Véhicules
+                        </a>
+                        <a href="/rentals/register/" class="btn btn-secondary btn-lg">
+                            <i class="fa-solid fa-user-plus me-2"></i>S'inscrire Gratuitement
+                        </a>
+                    {% endif %}
+                </div>
+
+                <!-- Trust row -->
+                <div class="d-flex flex-wrap gap-4 mt-4" style="animation:fadeInUp .65s ease .35s both;">
+                    <div class="d-flex align-items-center gap-2">
+                        <div style="width:8px;height:8px;border-radius:50%;background:var(--emerald);"></div>
+                        <span style="font-size:.82rem;color:var(--text-secondary);font-weight:500;">Assurance incluse</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <div style="width:8px;height:8px;border-radius:50%;background:var(--blue);"></div>
+                        <span style="font-size:.82rem;color:var(--text-secondary);font-weight:500;">Km illimité</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <div style="width:8px;height:8px;border-radius:50%;background:var(--amber);"></div>
+                        <span style="font-size:.82rem;color:var(--text-secondary);font-weight:500;">Support 24/7</span>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-6 text-center">
-                <img src="https://via.placeholder.com/500x300/007bff/ffffff?text=Location+de+Voitures" class="img-fluid rounded" alt="Véhicules">
+
+            <!-- Right: Stats -->
+            <div class="col-lg-6 mt-5 mt-lg-0">
+                <div class="row g-3 mt-2">
+                    <div class="col-6">
+                        <div class="stat-tile animate-fade-up animate-delay-1">
+                            <div class="stat-number">21+</div>
+                            <div class="stat-label">Véhicules</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-tile animate-fade-up animate-delay-2">
+                            <div class="stat-number">4.8<span style="font-size:.9rem;font-weight:400;background:none;-webkit-text-fill-color:var(--text-muted);color:var(--text-muted);">/5</span></div>
+                            <div class="stat-label">Note Moyenne</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-tile animate-fade-up animate-delay-3">
+                            <div class="stat-number">500+</div>
+                            <div class="stat-label">Clients Satisfaits</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-tile animate-fade-up animate-delay-4">
+                            <div class="stat-number">24/7</div>
+                            <div class="stat-label">Support</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<!-- ══════════════════════ WHY US ══════════════════════════════ -->
+<div class="py-5">
+    <div class="text-center mb-5">
+        <h2 class="section-title">Pourquoi nous choisir&nbsp;?</h2>
+        <p class="text-secondary mt-4" style="max-width:450px;margin:auto;">Une expérience de location pensée pour vous, simple et sans surprise.</p>
+    </div>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="glass-card p-4 text-center h-100">
+                <div class="feature-icon amber mx-auto"><i class="fa-solid fa-car-side"></i></div>
+                <h5 class="mb-2">Large Choix</h5>
+                <p class="mb-0" style="font-size:.875rem;">Une flotte diversifiée de véhicules récents et bien entretenus pour tous vos besoins.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="glass-card p-4 text-center h-100">
+                <div class="feature-icon emerald mx-auto"><i class="fa-solid fa-tag"></i></div>
+                <h5 class="mb-2">Prix Compétitifs</h5>
+                <p class="mb-0" style="font-size:.875rem;">Des tarifs transparents et compétitifs, sans frais cachés ni mauvaise surprise.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="glass-card p-4 text-center h-100">
+                <div class="feature-icon blue mx-auto"><i class="fa-solid fa-mobile-screen"></i></div>
+                <h5 class="mb-2">Réservation Facile</h5>
+                <p class="mb-0" style="font-size:.875rem;">Réservez en ligne 24/7 depuis votre ordinateur ou mobile, en quelques secondes.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="glass-card p-4 text-center h-100">
+                <div class="feature-icon cyan mx-auto"><i class="fa-solid fa-headset"></i></div>
+                <h5 class="mb-2">Service Client</h5>
+                <p class="mb-0" style="font-size:.875rem;">Une équipe disponible pour vous accompagner avant, pendant et après la location.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="glass-card p-4 text-center h-100">
+                <div class="feature-icon purple mx-auto"><i class="fa-solid fa-shield-halved"></i></div>
+                <h5 class="mb-2">Sécurité Totale</h5>
+                <p class="mb-0" style="font-size:.875rem;">Véhicules assurés et contrôlés régulièrement pour votre tranquillité d'esprit.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="glass-card p-4 text-center h-100">
+                <div class="feature-icon rose mx-auto"><i class="fa-solid fa-star"></i></div>
+                <h5 class="mb-2">Avis Clients</h5>
+                <p class="mb-0" style="font-size:.875rem;">Consultez les retours de nos clients satisfaits avant de réserver votre véhicule.</p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Statistics Section -->
-<div class="container py-5">
-    <div class="row text-center">
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h2 class="text-primary mb-0">50+</h2>
-                    <p class="text-muted mb-0">Véhicules</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h2 class="text-success mb-0">1000+</h2>
-                    <p class="text-muted mb-0">Locations</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h2 class="text-warning mb-0">500+</h2>
-                    <p class="text-muted mb-0">Clients</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h2 class="text-info mb-0">4.8/5</h2>
-                    <p class="text-muted mb-0">Note Moyenne</p>
-                </div>
-            </div>
-        </div>
+<!-- ══════════════════════ CTA BANNER ════════════════════════════ -->
+<div class="my-5 p-5 text-center" style="background:linear-gradient(135deg,#eff6ff 0%,#f0f5ff 100%);border:1px solid var(--blue-border);border-radius:var(--r-xl);">
+    <div style="display:inline-flex;align-items:center;gap:.5rem;background:var(--blue-bg);border:1px solid var(--blue-border);color:var(--blue);padding:.3rem .9rem;border-radius:999px;font-size:.75rem;font-weight:700;margin-bottom:1.2rem;text-transform:uppercase;letter-spacing:.08em;">
+        <i class="fa-solid fa-bolt"></i> Rejoignez-nous aujourd'hui
+    </div>
+    <h2 class="mb-2" style="letter-spacing:-0.5px;">Prêt à prendre la route&nbsp;?</h2>
+    <p class="text-secondary mb-4" style="max-width:400px;margin:auto auto 1.5rem;">Rejoignez des milliers de conducteurs satisfaits dès aujourd'hui.</p>
+    <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <a href="/rentals/register/" class="btn btn-primary btn-lg"><i class="fa-solid fa-user-plus me-2"></i>Créer un compte</a>
+        <a href="/vehicles/" class="btn btn-secondary btn-lg"><i class="fa-solid fa-car me-2"></i>Voir les véhicules</a>
     </div>
 </div>
 
-<!-- Features Section -->
-<div class="bg-light py-5">
+<!-- ══════════════════════ FOOTER ════════════════════════════ -->
+<footer class="site-footer">
     <div class="container">
-        <h2 class="text-center mb-5">Pourquoi nous choisir ?</h2>
-        <div class="row">
-            <div class="col-md-4 text-center mb-4">
-                <div class="mb-3">
-                    <span style="font-size: 3rem;">🚙</span>
-                </div>
-                <h4>Large Choix</h4>
-                <p>Une flotte diversifiée de véhicules récents et bien entretenus pour tous vos besoins.</p>
-            </div>
-            <div class="col-md-4 text-center mb-4">
-                <div class="mb-3">
-                    <span style="font-size: 3rem;">💰</span>
-                </div>
-                <h4>Prix Compétitifs</h4>
-                <p>Des tarifs transparents et compétitifs, sans frais cachés.</p>
-            </div>
-            <div class="col-md-4 text-center mb-4">
-                <div class="mb-3">
-                    <span style="font-size: 3rem;">📱</span>
-                </div>
-                <h4>Réservation Facile</h4>
-                <p>Réservez en ligne 24/7 depuis votre ordinateur ou mobile.</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4 text-center mb-4">
-                <div class="mb-3">
-                    <span style="font-size: 3rem;">🔧</span>
-                </div>
-                <h4>Service Client</h4>
-                <p>Une équipe disponible pour vous accompagner avant, pendant et après votre location.</p>
-            </div>
-            <div class="col-md-4 text-center mb-4">
-                <div class="mb-3">
-                    <span style="font-size: 3rem;">🛡️</span>
-                </div>
-                <h4>Sécurité</h4>
-                <p>Véhicules assurés et contrôlés régulièrement pour votre tranquillité.</p>
-            </div>
-            <div class="col-md-4 text-center mb-4">
-                <div class="mb-3">
-                    <span style="font-size: 3rem;">⭐</span>
-                </div>
-                <h4>Avis Clients</h4>
-                <p>Consultez les retours de nos clients satisfaits.</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- CTA Section -->
-<div class="bg-primary text-white py-5">
-    <div class="container text-center">
-        <h2 class="mb-3">Prêt à réserver votre véhicule ?</h2>
-        <p class="lead mb-4">Rejoignez des milliers de clients satisfaits</p>
-        <a href="/rentals/register/" class="btn btn-light btn-lg me-3">Créer un compte</a>
-        <a href="/login/" class="btn btn-outline-light btn-lg">Se connecter</a>
-    </div>
-</div>
-
-<!-- Footer -->
-<footer class="bg-dark text-white py-4 mt-5">
-    <div class="container">
-        <div class="row">
+        <div class="row g-4">
             <div class="col-md-4">
-                <h5>🚗 Location de Voitures</h5>
-                <p>Votre partenaire de confiance pour la location de véhicules en Tunisie.</p>
+                <div class="footer-brand mb-2">
+                    <span class="brand-icon"><i class="fa-solid fa-car-side"></i></span>
+                    AutoLux
+                </div>
+                <p style="font-size:.85rem;color:#94a3b8;">Votre partenaire de confiance pour la location de véhicules premium en Tunisie.</p>
             </div>
             <div class="col-md-4">
-                <h5>Contact</h5>
-                <p>📧 contact@location-voiture.com<br>
-                📱 +216 XX XXX XXX<br>
-                📍 Tunis, Tunisie</p>
+                <h6>Contact</h6>
+                <div style="font-size:.85rem;line-height:2.2;">
+                    <div><i class="fa-solid fa-envelope me-2" style="color:var(--blue);"></i>contact@autolux.tn</div>
+                    <div><i class="fa-solid fa-phone me-2" style="color:var(--blue);"></i>+216 XX XXX XXX</div>
+                    <div><i class="fa-solid fa-location-dot me-2" style="color:var(--blue);"></i>Tunis, Tunisie</div>
+                </div>
             </div>
             <div class="col-md-4">
-                <h5>Liens utiles</h5>
-                <p><a href="/rentals/support/" class="text-white">Support</a><br>
-                <a href="/rentals/register/" class="text-white">S'inscrire</a><br>
-                <a href="/login/" class="text-white">Se connecter</a></p>
+                <h6>Liens Utiles</h6>
+                <div class="d-flex flex-column gap-2">
+                    <a href="/vehicles/">Nos Véhicules</a>
+                    <a href="/rentals/support/">Support</a>
+                    <a href="/rentals/register/">S'inscrire</a>
+                    <a href="/login/">Connexion</a>
+                </div>
             </div>
         </div>
         <hr>
-        <div class="text-center">
-            <p>&copy; 2024 Location de Voitures. Tous droits réservés.</p>
-        </div>
+        <p class="text-center footer-sub mb-0">&copy; 2026 AutoLux. Tous droits réservés.</p>
     </div>
 </footer>
 {% endblock %}

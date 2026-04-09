@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="min-height: 70vh; display: flex; align-items: center;">
+    <div class="row w-100">
+        <div class="col-md-8 offset-md-2 col-lg-6 offset-lg-3">
+            <!-- Success Card -->
+            <div class="card border-0 shadow-sm" style="border-top: 4px solid #10B981;">
+                <div class="card-body p-5 text-center">
+                    <!-- Animation Icon -->
+                    <div style="font-size: 80px; margin-bottom: 20px;">
+                        ✅
+                    </div>
+
+                    <!-- Title -->
+                    <h2 class="card-title mb-3" style="color: #1A56DB; font-weight: 700;">
+                        Vérification réussie !
+                    </h2>
+
+                    <!-- Success Message -->
+                    <p class="card-text text-muted mb-4" style="font-size: 16px;">
+                        Félicitations ! Votre adresse email a été vérifiée avec succès.
+                    </p>
+
+                    <!-- User Info -->
+                    <div style="background-color: #ebf2f9; padding: 20px; border-radius: 8px; margin-bottom: 30px; border-left: 4px solid #10B981;">
+                        <p style="margin-bottom: 8px; font-size: 14px; color: #666;">
+                            <strong>Compte vérifié :</strong>
+                        </p>
+                        <p style="margin: 0; font-weight: 600; color: #1A56DB; font-size: 16px;">
+                            {{ user.username }}
+                        </p>
+                        <p style="margin: 8px 0 0 0; font-size: 13px; color: #999;">
+                            {{ user.email }}
+                        </p>
+                    </div>
+
+                    <!-- Welcome Info -->
+                    <div class="alert alert-success" role="alert" style="text-align: left;">
+                        <strong>🎉 Bienvenue sur AutoLux !</strong>
+                        <p style="margin-bottom: 10px; margin-top: 10px;">Vous êtes automatiquement connecté. Vous pouvez maintenant :</p>
+                        <ul style="margin-bottom: 0;">
+                            <li>Parcourir notre flotte de véhicules</li>
+                            <li>Effectuer vos premières réservations</li>
+                            <li>Gérer votre profil</li>
+                            <li>Consulter vos locations</li>
+                        </ul>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div style="display: flex; gap: 10px; flex-direction: column; margin-top: 30px;">
+                        <a href="{% url 'home' %}" class="btn btn-primary" style="font-weight: 600;">
+                            🚗 Découvrir nos véhicules
+                        </a>
+                        <a href="{% url 'user_dashboard' %}" class="btn btn-outline-primary" style="font-weight: 600;">
+                            📊 Aller à mon tableau de bord
+                        </a>
+                        <a href="{% url 'profile' %}" class="btn btn-outline-secondary">
+                            👤 Configurer mon profil
+                        </a>
+                    </div>
+
+                    <!-- Info Box -->
+                    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                        <p style="margin-bottom: 0; font-size: 13px; color: #999;">
+                            <strong>💡 Conseil :</strong> Complétez votre profil pour une meilleure expérience. 
+                            Cela prend moins d'une minute !
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions Card -->
+            <div class="card border-0 mt-4" style="background-color: #f8f9fa;">
+                <div class="card-body p-4">
+                    <strong style="color: #1A56DB; display: block; margin-bottom: 15px;">🚀 Quick Start Guide</strong>
+                    
+                    <div style="margin-bottom: 12px;">
+                        <strong style="color: #333; display: block; font-size: 14px;">1️⃣ Parcourez les véhicules</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 13px; color: #666;">Découvrez notre large sélection de véhicules premium.</p>
+                    </div>
+
+                    <div style="margin-bottom: 12px;">
+                        <strong style="color: #333; display: block; font-size: 14px;">2️⃣ Effectuez une réservation</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 13px; color: #666;">Choisissez vos dates et réservez votre véhicule préféré.</p>
+                    </div>
+
+                    <div>
+                        <strong style="color: #333; display: block; font-size: 14px;">3️⃣ Profitez de vos locations</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 13px; color: #666;">Retrouvez toutes vos réservations dans votre tableau de bord.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Support Note -->
+            <div style="margin-top: 30px; padding: 20px; background-color: #f8f9fa; border-radius: 8px; text-align: center;">
+                <p style="margin-bottom: 8px; font-size: 14px;">
+                    <strong>Des questions ?</strong>
+                </p>
+                <p style="margin: 0; font-size: 13px; color: #666;">
+                    Consultez notre <a href="{% url 'support' %}" style="color: #1A56DB; text-decoration: none;">page de support</a> 
+                    ou contactez-nous à <a href="mailto:support@autolux.local" style="color: #1A56DB; text-decoration: none;">support@autolux.local</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

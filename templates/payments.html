@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Paiements - AutoLux{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-4">
+        <h1>Gestion des paiements</h1>
+        <p class="text-secondary">Consultez et gérez vos paiements de location</p>
+    </div>
+
+    <ul class="nav nav-tabs mb-4" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="pending-tab" data-bs-toggle="tab" href="#pending">En attente</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="paid-tab" data-bs-toggle="tab" href="#paid">Payés</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="all-tab" data-bs-toggle="tab" href="#all">Tous les paiements</a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <!-- Pending Payments -->
+        <div id="pending" class="tab-pane fade show active">
+            <div class="card">
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-circle"></i> Vous avez 1 paiement en attente
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Date d'échéance</th>
+                                    <th>Véhicule</th>
+                                    <th>Montant</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>10/04/2026</td>
+                                    <td>Tesla Model 3</td>
+                                    <td>150 DT</td>
+                                    <td><span class="badge badge-warning">En attente</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary">Payer</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Paid Payments -->
+        <div id="paid" class="tab-pane fade">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Date du paiement</th>
+                                    <th>Véhicule</th>
+                                    <th>Montant</th>
+                                    <th>Statut</th>
+                                    <th>Reçu</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>01/04/2026</td>
+                                    <td>BMW X5</td>
+                                    <td>450 DT</td>
+                                    <td><span class="badge badge-success">Payé</span></td>
+                                    <td><a href="#" class="btn btn-sm btn-secondary"><i class="fas fa-download"></i></a></td>
+                                </tr>
+                                <tr>
+                                    <td>28/03/2026</td>
+                                    <td>Mercedes C-Class</td>
+                                    <td>300 DT</td>
+                                    <td><span class="badge badge-success">Payé</span></td>
+                                    <td><a href="#" class="btn btn-sm btn-secondary"><i class="fas fa-download"></i></a></td>
+                                </tr>
+                                <tr>
+                                    <td>20/03/2026</td>
+                                    <td>Audi A4</td>
+                                    <td>350 DT</td>
+                                    <td><span class="badge badge-success">Payé</span></td>
+                                    <td><a href="#" class="btn btn-sm btn-secondary"><i class="fas fa-download"></i></a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- All Payments -->
+        <div id="all" class="tab-pane fade">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h5>Statut global</h5>
+                            <p class="text-secondary">Montant total payé: <strong>1100 DT</strong></p>
+                        </div>
+                        <button class="btn btn-secondary">Télécharger les reçus</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Véhicule</th>
+                                    <th>Montant</th>
+                                    <th>Statut</th>
+                                    <th>Méthode</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="background: #F8F9FA;">
+                                    <td>10/04/2026</td>
+                                    <td>Tesla Model 3</td>
+                                    <td>150 DT</td>
+                                    <td><span class="badge badge-warning">En attente</span></td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>01/04/2026</td>
+                                    <td>BMW X5</td>
+                                    <td>450 DT</td>
+                                    <td><span class="badge badge-success">Payé</span></td>
+                                    <td>Carte bancaire</td>
+                                </tr>
+                                <tr>
+                                    <td>28/03/2026</td>
+                                    <td>Mercedes C-Class</td>
+                                    <td>300 DT</td>
+                                    <td><span class="badge badge-success">Payé</span></td>
+                                    <td>Virement</td>
+                                </tr>
+                                <tr>
+                                    <td>20/03/2026</td>
+                                    <td>Audi A4</td>
+                                    <td>350 DT</td>
+                                    <td><span class="badge badge-success">Payé</span></td>
+                                    <td>Carte bancaire</td>
+                                </tr>
+                                <tr>
+                                    <td>15/03/2026</td>
+                                    <td>Volvo XC90</td>
+                                    <td>500 DT</td>
+                                    <td><span class="badge badge-success">Payé</span></td>
+                                    <td>Espèces</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
